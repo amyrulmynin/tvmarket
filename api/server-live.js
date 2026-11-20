@@ -15,6 +15,7 @@
 const http = require('http');
 const https = require('https');
 const crypto = require('crypto');
+const bystra = require('./bystra.js');
 
 const PORT = parseInt(process.env.PORT || '8081', 10);
 const UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36';
@@ -28,6 +29,11 @@ const REGION = (ex) => {
   if (e === 'TSE') return 'japan';
   if (['NSE', 'BSE'].includes(e)) return 'india';
   return 'america';
+};
+const API_KEY = process.env.TV_API_KEY || '';
+// Timeframe lebih tinggi untuk pengesahan direction (Bystra: HTF confirm LTF).
+const HTF_OF = {
+  '1': '5', '5': '15', '15': '60', '60': '240', '240': '1D', '1D': '1W',
 };
 const normSymbol = (s) => {
   if (!s) return 'OANDA:XAUUSD';
@@ -348,11 +354,23 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(204, {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Headers': 'Content-Type, X-API-Key',
     });
     return res.end();
   }
   if (req.method !== 'GET') return json(res, 405, { error: 'kaedah tidak dibenarkan' });
+
+  // ====== Auth: API key (jika TV_API_KEY diset) ======
+  // Terima ?key=, header X-API-Key, atau Authorization: Bearer
+  if (API_KEY && u.pathname !== '/api/health') {
+    const given =
+      u.searchParams.get('key') ||
+      req.headers['x-api-key'] ||
+      (req.headers.authorization || '').replace(/^Bearer\s+/i, '');
+    if (given !== API_KEY) {
+      return json(res, 401, { error: 'API key tidak sah', hint: 'Hantar ?key=... atau header X-API-Key' });
+    }
+  }
 
   const sym = normSymbol(u.searchParams.get('symbol'));
   const interval = u.searchParams.get('interval') || '1';
@@ -397,6 +415,30 @@ const server = http.createServer(async (req, res) => {
       // snapshot sekali guna getCandles yang lebih ringan (sambungan baru)
       return json(res, 200, await snapshotCandles(sym, u.searchParams.get('interval') || '1D', bars));
     }
+    if (u.pathname === '/api/bystra') {
+      // Analisis penunjuk kaedah Bystra: ambil candle LTF + HTF (confirmation),
+      // lalu kira direction, SNR, setup, entry/SL/TP, confidence %.
+      const iv = u.searchParams.get('interval') || '60';
+      const n = Math.min(parseInt(u.searchParams.get('bars') || '120', 10), 500);
+      const useHtf = u.searchParams.get('htf') !== '0';
+      const snap = await snapshotCandles(sym, iv, n);
+      let htfConfirm = null;
+      let htfTrend = null;
+      if (useHtf) {
+        try {
+          const hiv = HTF_OF[iv] || null;
+          if (hiv) {
+            const hs = await snapshotCandles(sym, hiv, Math.min(n, 120));
+            const hr = bystra.analyze(hs.candles, { interval: hiv });
+            if (hr.ok) { htfTrend = hr.trend; htfConfirm = hr.trend === 'up' ? 'bull' : hr.trend === 'down' ? 'bear' : null; }
+          }
+        } catch (e) { /* HTF gagal tidak halang LTF */ }
+      }
+      const report = bystra.analyze(snap.candles, {
+        symbol: snap.symbol, interval: iv, htfConfirm,
+      });
+      return json(res, 200, { ...report, htf: { interval: HTF_OF[iv] || null, trend: htfTrend } });
+    }
     if (u.pathname === '/api/search') {
       const q = u.searchParams.get('q');
       if (!q) return json(res, 400, { error: 'parameter q diperlukan' });
@@ -406,7 +448,8 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, {
         name: 'TV Market API v2 — live',
         endpoints: ['/api/health', '/api/live', '/api/stream?symbol=OANDA:XAUUSD&interval=1&bars=120',
-          '/api/quote?symbol=OANDA:XAUUSD', '/api/candles?symbol=OANDA:XAUUSD', '/api/search?q=gold'],
+          '/api/quote?symbol=OANDA:XAUUSD', '/api/candles?symbol=OANDA:XAUUSD',
+          '/api/bystra?symbol=OANDA:XAUUSD&interval=60&bars=120', '/api/search?q=gold'],
       });
     }
     return json(res, 404, { error: 'laluan tidak dijumpai' });

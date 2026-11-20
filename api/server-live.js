@@ -449,7 +449,19 @@ const server = http.createServer(async (req, res) => {
           }
         } catch (e) { /* HTF gagal tidak halang LTF */ }
       }
-      const report = bystra.analyze(snap.candles, {
+      // Buang forming bar (candle terakhir belum tutup) — analysis mesti pada
+      // candle yang sudah sah, bukan harga yang masih bergerak. Ini punca
+      // entry/SL/TP/arah berubah-ubah setiap poll.
+      const closed = snap.candles[snap.candles.length - 1];
+      const lastClosedTs = closed.time > 1e11 ? Math.round(closed.time / 1000) : closed.time;
+      const nowSec = Math.floor(Date.now() / 1000);
+      const ivSec = { '1': 60, '5': 300, '15': 900, '60': 3600, '240': 14400, '1D': 86400 }[iv] || 3600;
+      let arr = snap.candles;
+      if (lastClosedTs + ivSec > nowSec) {
+        arr = snap.candles.slice(0, -1); // candle terakhir masih forming — buang
+      }
+      if (arr.length < 30) arr = snap.candles; // fallback: data terlalu pendek
+      const report = bystra.analyze(arr, {
         symbol: snap.symbol, interval: iv, htfConfirm,
       });
 

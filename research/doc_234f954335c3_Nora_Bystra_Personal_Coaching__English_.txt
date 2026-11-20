@@ -1,0 +1,272 @@
+        DMD1
+Double Maru Direction Type 1
+
+
+
+
+    Bystra
+• Bila price dah start buat rejection di zone
+  direction tu, tunggu sampai price buat setup.
+  Kalau ada engulfing lebih bagus sebab price
+  dah ready dan confirm untuk turun/ naik
+        When the price has started to make a rejection in the zone direction,
+        wait for the price to make a setup. If there is engulfing it is better because
+        the price is ready and confirmed for sleeping/boarding
+
+
+
+                                Bystra
+              Formula
+
+
+
+Look for DM
+
+                Standby when you find rejection in
+                the marubozu zone. Majority price for
+                QMR/Manipulation setup there
+
+
+
+
+              Bystra
+Make sure HH or
+LL break only
+                  Bystra
+                           This LL has reached too low.
+                           High risk
+ Direction      Pink adalah Direction   Pink is Direction
+
+
+Setup - Entry   Blue Aqua adalah Setup - Entry     Blue Aqua is Setup - Entry
+
+
+
+
+        Bystra
+M30       DMD1 in M30
+          QMR in M15
+
+
+                    M15
+
+
+                          QMR
+
+
+
+
+      Bystra
+           HTF got DMD1 ( Direction )
+           LTF got QM sell ( Setup )
+
+
+
+
+                                        Sell
+HTF
+      Bystra
+                          LTF
+           HTF got DMD1 ( Direction )
+           LTF got QM buy ( Setup )
+
+
+
+
+      Bystra
+HTF
+                                        Buy
+
+               LTF
+         HTF got DMD1
+         LTF got QMR
+
+
+
+
+Bystra
+                                   H4
+   Monthly TF
+
+
+
+
+DMD1 in Monthly TF
+                     Bystra   H1
+
+
+QMR in H4
+QMC in H1
+          Daily TF
+                              H4 TF
+
+
+
+
+                     Bystra
+Daily got DMD1
+H4 got MEF
+H4
+                            M5
+
+
+
+
+                   Bystra
+                            QMR
+ DMD1 in H4
+ QMR setup in M5
+M30
+
+
+
+               DMD1 in M30
+               QMR in M15, M30
+
+
+
+
+         M15
+
+      Bystra
+         H1
+
+
+
+
+                       M15
+
+
+
+
+              Bystra
+                             QMR
+
+
+
+DMD1 in H1
+QMR in M15
+H4
+
+                             H1
+
+
+
+
+                        QMR H1
+
+
+
+
+M30
+
+
+
+      Bystra    DMD1 in H4
+                QMR in H1
+                QMR in M30
+
+
+
+      QMR M30
+        DMD2
+Double Maru Direction Type 2
+
+
+    Bystra
+Bystra
+Daily
+
+
+
+
+        Bystra
+          Daily DMD2
+          H4 MEF
+          M30, M15 QM
+H4
+                    M30
+
+
+
+
+H4 DMD2
+           Bystra
+M15 + M30 QMR
+Daily               H1
+
+
+
+
+        Bystra
+           DMD2 in Daily
+           QMR in H1
+         SISD
+Setup Inside Setup Direction
+
+
+    Bystra
+Bystra
+Bystra
+             H4
+   H1 QMM
+   H4 DMD1
+   M5 QMC
+
+
+
+
+              M5
+
+
+Bystra
+         H4 QMR
+         M5 MINI QMR
+
+
+
+
+H4                     M5
+
+
+
+
+     Bystra
+H4                  M30
+     H4 QMR
+     M30 Mini QMR
+
+
+     Bystra
+     BSD
+Blindspot Direction
+
+
+Bystra
+Bystra
+       H4 Blindspot
+       M15 QMR
+
+
+
+
+     Bystra
+H4
+                      M15
+               Bystra
+H1                      M30
+
+
+
+
+     H1 BS
+     M15 QMR
+       H4 BS
+       M15 QMR
+
+
+
+
+     Bystra
+H4           M15
+

@@ -1,0 +1,49 @@
+Property Of Bystra
+   BUE = Bullish Engulfing
+   BEE = Bearish Engulfing
+   SNRC1 = SnR Continuation Type 1
+   SNRC2 = SnR Continuation Type 2
+   QMR = QM Reversal
+   QMC = QM Continuation
+   BS = Blindspot
+   MEF = Manipulation Entry Formula
+   HTF = Higher Timeframe
+   LTF = Lower Timeframe
+LTF
+
+
+
+
+      HTF
+              QMC
+
+      SNRC2
+
+
+
+QMR
+Manipulation / MEF
+SNRC2
+SNRC1
+QMR
+ Nota ini bukan untuk dijual. Nota ini adalah untuk
+  trader yang ingin mendalami ilmu structure + setup
+  basic yang telah saya ajarkan di video atau PoB
+  Notes.
+
+ Saya mohon doakan / sedekahkan al fatihah kepada
+  arwah ibu saya, Aishah Binti Ngah yang telah pergi
+  meninggalkan dunia pada 31 julai 2022.
+
+ Semoga ilmu ini bermanfaat untuk semua. All the
+  best!
+ This note is not for sale. This note is for traders who
+  want to explore basic structure + setup knowledge
+  that I have taught in videos or PoB Notes.
+
+ Please pray for my mother that have left this world
+  on 31st July 2022
+
+ Hope this knowledge benefits for you and all the
+  best!
+

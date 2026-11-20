@@ -1,0 +1,984 @@
+FOREX TRADING
+   BASIC TO ADVANCE TECHNIC
+
+
+
+
+                   BY
+              NAJMI FIRDAUS
+        5SOP MUST HAVE BEFORE ENTRY
+
+
+
+BASIC           1) Zone
+
+                2) Rejection
+ SNR            3) Confirmation
+
+                4) Setup
+
+                5)Entry
+Support (Base)         Resistance (Top)
+Buy at support (S)   Sell at resistance (R)
+
+
+
+
+       S
+
+                               R
+
+
+
+
+       S
+SNR LEVELS
+• Price usually will play at the SNR Levels because at the levels will have order buyer or
+  seller.
+
+• When the SNR Levels has been touched many times, we have to be careful even we
+  already have confirmation to entry.
+
+• The more touched, the weaker that SNR.
+
+• Because of that, we have to choose SNR that have not been touched.
+Example : SNR HAS NOT BEEN TOUCHED
+   R
+
+
+
+           (R) Has not been
+           touched
+       R
+
+
+
+
+                                  S
+                                  (S) Has not been
+                                  touched
+
+
+
+                              S
+Example : SNR ALREADY TOUCHED
+   R
+                          Dangerous to
+       Has been touched   entry even have
+                          confirmation
+
+
+
+       R
+
+
+
+
+                                                S
+
+
+
+                                                                       Dangerous to
+                                                    Has been touched   entry even have
+                                                                       confirmation
+                                            S
+Example: SNR BREAKOUT TOUCHED MANY TIMES
+ R                                        R
+         SNR touched
+         many times
+                       Breakout
+
+
+
+     R
+
+
+
+
+                                      S
+
+
+                                                            Breakout
+                                              SNR touched
+                                              many times
+
+                                  S
+THE RIGHT
+WAY
+TO USE SNR
+• We must find SNR direction at HTF like ( MN,W1,D1 ). As usual i will use the Time Frame W1. We
+  will mark (Support & Resistance) zone at the Time Frame W1.
+• After we mark Support & Resistance zone at W1, we will mark the zone at D1 because D1 zone will be
+  the zone for (SHORT ENTRY).
+• Only have two way for direction ;
+1.   SELL LONG, BUY SHORT
+2.   BUY LONG, SELL SHORT
+• When a price go inside to the SNR zone, and how do we know that the direction is already changed to
+  (Sell long, Buy short) or (Buy long, Sell short) ?
+• If that direction changes, a price will make a figure of confirmation engulfing.
+• How much that we should engulfing at the time frame?
+Example : TIME FRAME
+                  Zone      :         D1       W1       MN
+
+
+Confirmation Engulfing      :         H4       D1       W1
+Example : SELL LONG, BUY SHORT
+ R      Time frame W1   R         Time frame D1
+                            Direction Sell long reach          Engulfing
+     Waiting for the        W1 Support, before a price
+     confirmation at        want to go to W1 Support, A
+     Lower Time frame       price should go to D1
+                            Support
+
+
+
+                                                   S
+                                                   Buy Short
+
+
+                                              S
+                                              Buy Short
+
+
+
+
+              S                          S
+Example : BUY LONG, SELL SHORT
+                                          R
+
+
+
+
+                                              Sell short
+                                              R
+
+
+
+
+                                                  Sell short
+                                                   R
+
+
+
+      Waiting the
+                             Direction Buy long reach
+      confirmation at
+                             W1 (R), before a price
+      lower Time frame
+                             want to go toW1(R) , A
+                             price should go to D1 (R)
+  S                      S
+              • We need a 2nd movement because that will
+THE WAY OF
+                help us in terms of marking the right SNR.
+MARKING
+SNR AND 2ND   • So that we didn’t choose a dangerous zone
+MOVEMENT        or we choose the zone the end of the trend.
+Example : The zone have a 2nd movement
+                                               Resisstance
+
+
+
+                                                        2nd Movement
+
+                            2nd Movement
+
+
+
+                  Support
+
+Example : The zone don’t have a 2nd movement
+                                               Resisstance
+
+
+
+
+                  Support
+2nd Movement
+
+               2nd Movement
+2nd Movement   2nd Movement
+• There are many firgure of 2nd movement in the market.
+• For this 2nd movement will stay at the top/middle/bottom part. No matter where a 2nd movement is, the
+  most important are there must be a 2nd movement and be seen clearly so that we don’t confused to
+  choose SNR zone.
+          R                                   R
+              2nd movement
+                                                                              R
+                                                    2nd movement
+                                                                                      2nd movement
+
+
+
+
+                                                                                      2nd movement
+                                                   2nd movement
+
+              2nd movement
+          S                                   S                                   S
+ THE WAY TO USE SNR AND
+ 2ND MOVEMENT
+• For this 2nd movement different from the previous one because there are too many 2nd
+ movement and which one we should choose to make a zone?
+
+• To do the support zone, we should choose a 2nd movement starting from the
+
+  bottom or the floor price.
+
+• To do the resistance zone, we should choose a 2nd movement starting from the top or
+ the roof price.
+Example : Support & 2nd movement                               Example : Resistance & 2nd movement
+
+                                                                               (R) This is valid because there
+                                                                               have 2nd movement under (R).
+                                                                           R
+                  2nd movement
+
+
+                                     S                                                  (R) This is valid because there have
+                                     (S) This is invalid                                2nd movement under (R).
+            2nd movement
+                                     because there is no 2nd                        R
+                                     movement on (S).
+                             S                                      2nd movement
+                                 (S) This is valid because                                     (R) This is valid because there
+                                 there have 2nd                                                have 2nd movement under (R).
+     2nd movement                movement on (S).                                             R
+
+                    S                                                                                 (R) This is invalid because
+                                                                           2nd movement               there is no 2nd movement
+                        (S) This is valid because
+                        there have 2nd                                                              R under (R).
+                        movement on (S).
+                                                                                   2nd movement
+            S (S) This is valid because
+              there have 2nd
+              movement on (S).
+2ND MOVEMENT   2ND MOVEMENT
+2ND MOVEMENT   2ND MOVEMENT
+HOW TO IDENTIFY
+THE SND (SUPPLY&DEMAND)
+• Supply & Demand are confirmation.
+
+• This confirmation will be divided into four (RBD,DBR,RBR,DBD).
+
+• For RBR or DBD, we will make confirmation as a continuation.
+
+• For RBD or DBR, we will make confirmation as a reversal.
+   ➢RBR means the price want to keep going up.
+   ➢DBD means the price want to keep going down.
+   ➢RBD means the price want to change direction, from up to down.
+   ➢DBR means the price want to change direction, from down to up.
+SUPPLY AND DEMAND
+         D               *DROP BASE DROP                   *RALLY BASE RALLY
+
+                 B
+
+                     D
+                                                           R
+                                                       B
+
+                                               R
+
+             B
+                     D
+
+
+                                           D
+
+
+     R                                                     R
+                                                   B
+                     *RALLY BASE DROP                          *DROP BASE RALLY
+BASIC ENGULFING
+
+                           • Engulfing is a zone or place “possible” zone buy or
+                             sell.
+                           • Hidden setup is in two candle engulfing.
+                           • Engulfing as a zone SND (Supply&Demand) too.
+
+
+
+
+  Blue candle should                                                                 Red candle should close
+  close and break shadow                                                             and break shadow blue
+  red candle                                                                         candle
+
+
+
+
+➢ BULLISH ENGULFING                                                                ➢ BEARISH ENGULFING
+➢ SUPPLY ZONE                                                                      ➢ DEMAND ZONE
+ENGULFING 3 TYPE
+• In engulfing usually will have a hidden setup.
+
+• Engulfing divided into three type, Type1, Type2, Type3 or called as (blank candle);
+
+    ➢Type 1, one candle eaten by one candle.
+
+    ➢Type 2, one candle eaten by two candle.
+
+    ➢Type 3, one candle eaten by three candle.
+TYPE 1   TYPE 2   TYPE 3
+HOW TO COMBINE
+THE (SNR) AND (SND)
+• For (SNR) usually will be on the left side.
+
+• For (SND) usually will be on the right side.
+
+• SNR will be used as direction, because in the SNR Zone will have a big order, but there
+  have too many SNR in real market. So which one we should take?
+
+• We will take SNR which makes SND when a price is in the SNR zone, like Rejection and
+  Engulfing.
+EXAMPLE : COMBINED SNR&SND
+        LEFT SNR            RIGHT SND                    LEFT SNR             RIGHT SND
+                                    Rejection
+R
+                                     Engulfing
+         Don’t have
+         Rejection&Engulf
+    R
+
+        Don’t have
+        Rejection&Engulf
+        R
+                                                          S
+                                                           Don’t have
+                                                           Rejection&Engulf
+
+                                                     S
+                                                           Don’t have
+                                                           Rejection&Engulf
+                                                                                     Engulfing
+                                                 S
+                                                                                     Rejection
+              • 3 Reversal Setup
+
+                 1.   Quasimodo Reversal
+
+                 2.   Manipulation
+
+                 3.   Blindsport
+SETUP ENTRY
+POINT         • 3 Setup Continuation
+
+                 1.   Quasimodo Continuation
+
+                 2.   SNR Continuation (i)
+
+                 3.   SNR Continuation (ii)
+Quasimodo Reversal
+• Quasimodo or known as QM setup are (Hight Risk) because this QM involves two trend .
+
+                                                                ➢ Entry Shoulder (L)
+                       HH                  Stoploss             ➢ Stoploss (LL)
+                                                                ➢ Take Profit(HH)
+
+               H                   Entry                                         HH               Take Profit
+
+
+
+                   L
+                                                                       H
+
+
+
+                             LL            Take Profit             L                   Entry
+
+            ➢ Entry Shoulder (H)
+            ➢ Stoploss (HH)
+            ➢ Take Profit(LL)                                              LL                  Stoploss
+• Quasimodo Reversal Sell
+        HH
+                          HTF Bearish Engulfing
+             LTF QMR
+
+
+
+
+H
+                  Entry
+
+
+
+
+    L
+
+
+
+             LL
+LTF QMR
+
+
+          HTF Bearish Engulfing
+LTF QMR   HTF Bearish Engulfing
+LTF QMR   HTF Bearish Engulfing
+          HTF Bearish Engulfing
+
+LTF QMR
+• Quasimodo Reversal Buy
+LTF QMR   HTF
+          Bullish Engulfing
+LTF QMR   HTF Bullish Engulfing
+LTF QMR
+
+          HTF Bullish Engulfing
+LTF QMR
+          HTF Bullish Engulfing
+LTF QMR   HTF Bullish Engulfing
+  MANIPULATION
+  • Manipulation belongs to the reversal category.
+  • This setup will be more (Hight Risk) than QMR.
+  • Manipulation will often hide inside body Engulfing.
+      ➢Engulfing > Double Maru > RBR/DBD
+      ➢Engulfing > RBR/DBD
+               HTF                  LTF                                     *RBR will be in
+                                                                            Engulfing HTF
+                                           SL 30Pips
+* Bearish
+Engulfing
+                                               Entry                                              Entry
+                                                          *Bullish
+                                                          Engulfing
+                        *DBD will be in                                                         SL 30Pips
+                        Engulfing HTF
+                                                                      HTF                 LTF
+• Manipulation Sell
+                   HTF Bearish Engulfing
+
+
+LTF Manipulation
+                   HTF Bearish Engulfing
+
+
+
+
+LTF Manipulation
+LTF Manipulation
+                   HTF Bearish Engulfing
+LTF Manipulation   HTF Bearish Engulfing
+                   HTF Bearish Engulfing
+
+
+
+
+LTF Manipulation
+LTF Manipulation   HTF Bearish Engulfing
+LTF Manipulation   HTF Bearish Engulfing
+• Manipulation Buy
+LTF Manipulation   HTF Bullish Engulfing
+LTF Manipulation
+
+
+                   HTF Bullish Engulfing
+                   HTF Bullish Engulfing
+LTF Manipulation
+LTF Manipulation
+                   HTF Bullish Engulfing
+BLINDSPORT
+• Blindsport categorized as Reversal Setup.
+
+• Blindsport is a blindsport entry and also called as Swap Zone.
+
+• Why this Blindsport Reversal? Because this blindsport against the original direction.
+
+                                                                                             ➢ Engulfing Failed +
+                    Significant Break                                                          Significant Break
+                                                                                             ➢ Sell
+
+           Engulfing Failed
+
+                                        Entry                                                             Stoploss 30pips
+
+
+                                            Stoploss 30pips                                       Entry
+
+                                                                     Engulfing Failed
+                                  ➢ Engulfing Failed +
+                                    Significant Break
+                                  ➢ Buy                                       Significant Break
+• BLINDSPORT SELL
+    LTF Setup Blindsport
+
+
+                                       HTF Bearish Engulfing
+
+
+
+
+                   Significant Break
+
+
+
+
+Engulfing Failed
+                   Significant Break
+
+
+
+
+Engulfing Failed
+                                       HTF Bearish Engulfing
+
+
+
+
+   LTF Blindsport
+                   Significant Break
+
+
+
+
+Engulfing Failed
+
+                                       HTF Bearish Engulfing
+
+
+
+ LTF Blindsport
+                    Significant Break
+
+
+
+
+Engulfing Failed
+
+
+                                        HTF Bearish Engulfing
+
+
+   LTF Blindsport
+                   Significant Break
+
+
+
+
+                                       HTF Bearish Engulfing
+Engulfing Failed
+
+
+
+
+  LTF Blindsport
+• BLINDSPORT BUY
+     LTF Blindsport
+
+
+
+
+Engulfing Failed
+
+
+
+
+                      Significant Break   HTF Bullish Engulfing
+           LTF Blindsport
+
+
+
+
+                                       HTF Bullish Engulfing
+
+
+
+Engulfing Failed
+
+
+
+
+                   Significant Break
+    LTF Breakout
+
+
+
+                                       HTF Bullish Engulfing
+
+
+
+Engulfing Failed
+
+
+
+
+                   Significant Break
+         LTF Blindsport
+                                       HTF Bullish Engulfing
+
+
+
+
+Engulfing Failed
+
+
+
+
+                   Significant Break
+LTF Blindsport
+
+
+
+                                HTF Bullish Engulfing
+
+
+ Engulfing Failed
+
+
+
+
+            Significant Break
+Quasimodo Continuation
+• QMC almost same with QMR, but QMC have 3Drive on it.
+
+• QMC will happen in continuation condition.
+
+• The best entry QMC is after reversal.
+
+       Drive1
+
+                        Drive 2
+                        HH                                              HH
+
+                                  Drive 3
+                   H                        Entry Sell            H
+
+                    L                                                                     Entry Buy
+                                                                  L
+                                                                                Drive 3
+
+                           LL                                         LL
+                                                                      Drive 2
+
+                                                         Drive1
+• QUASIMODO
+  CONTINUATION BUY
+LTF QM Continuation   HTF Bullish Engulfing
+LTF QM Continuation
+                      HTF Bullish Engulfing
+                      HTF Bullish Engulfing
+
+
+LTF QM Continuation
+LTF Qm Continuation   HTF Bullish Engulfing
+LTF Qm Continuation   HTF Bullish Engulfing
+• QUASIMODO
+  CONTINUATION
+  SELL
+                      HTF Bearish Engulfing
+
+
+
+
+LTF QM Continuation
+LTF QM Continuation   HTF Bearish Engulfing
+LTF QM Continuation   HTF Bearish Engulfing
+LTF Qm Continuation   HTF Bearish Engulfing
+LTF Qm Continuation   HTF Bearish Engulfing
+SNR Continuation 1
+• Entry point / Confirmation RBR/DBD
+
+• Strong Resistance / Strong Support
+
+• Find a confirmation at HTF, find engulfing untouched Danger Zone
+
+                                                                           *STRONG SUPPORT + DBD
+                                                                           *SELL
+
+
+
+              Strong R
+                                       Entry Buy
+                         RBR                                             DBD
+                                                                                    Entry Sell
+                                                              Strong S
+
+
+
+                         *STRONG RESISTANCE + RBR
+                         *BUY
+• SNR CONTINUATION
+  1 SELL
+LTF SNRC 1
+
+             HTF Bearish Engulfing
+LTF SNRC 1   HTF Bearish Engulfing
+LTF Snrc 1   HTF Bearish Engulfing
+LTF SNRC 1   HTF Bullish Engulfing
+LTF SNRC 1   HTF Bearish Engulfing
+LTF SNRC 1   HTF Bearsish Engulfing
+• SNR CONTINUATION
+  1 BUY
+LTF SNRC 1   HTF Bullish Engulfing
+LTF Snrc 1   HTF Bullish Engulfing
+LTF SNRC 1   HTF Bullish Engulfing
+             HTF Bullish Engulfing
+LTF SNRC 1
+HTF Bullish Engulfing
+SNR CONTINUATION 2
+• Snrc2 siblings with Snrc1
+
+• Entry point ( RBD/DBR)
+
+• Find a confirmation at HTF, find engulfing untouched Danger Zone
+
+*Strong Resistance + DBR
+*Buy
+                                                                                RBD
+                                                                                             Stoploss 30pips
+         Strong R
+                                 Entry Buy
+                                                                                      Entry Sell
+                                                              Strong S
+                                      Stoploss 30pips
+                           DBR
+                                                        *Strong Support + RBD
+                                                        *Sell
+• SNR CONTINUATION
+  2 SELL
+LTF SNRC 2
+             HTF Bearish Engulfing
+    RBD
+
+            Entry
+S
+
+
+
+
+                    HTF Bearish Engulfing
+LTF SNRC2
+LTF Snrc 2   HTF Bearish Engulfing
+LTF SNRC 2   HTF Bearish Engulfing
+• SNR CONTINUATION
+  2 BUY
+LTF SNC 2   HTF Bullish Engulfing
+LTF SNRC 2   HTF Bullish Engulfing
+LTF SNRC 2
+             HTF Bullish Engulfing
+LTF SNRC 2   HTF Bullish Engulfing
+LTF SNRC 2
+
+             HTF Bullish Engulfing
+HOW TO USE MULTI TIME FRAME
+• Multi time frame is very important , because it will help us avoid being
+   manipulated by BIG TRADER.
+• Have two ways to use for multi time frame.
+
+*From (HTF) to (LTF)
+*Find a confirmation before looking for setup
+ CONFIRMATION            D1        H4           H1    M30   M15   M5
+
+       SETUP             H4        H1           M30   M15   M5    M1
+                         H1        M30          M15   M5    M1
+
+*From (LTF) to (HTF)
+*Find a setup before looking for confirmation
+ CONFIRMATION M15                  M30        H1      H4    D1
+                         M5        M15        M30     H1    H4    D1
+       SETUP
+                         M1        M5        M15      M30   H1    H4
+                  ➢ Why we need 5SOP ?
+
+                  ➢ What is 5SOP?
+
+
+
+                  1) Zone
+                  • Zone required because in SNR Zone will have a big
+                    order.
+ ENTRY USING      • How to know in SNR Zone have a big order? That’s why
+                    we need (SOP 2 Rejection).
+5SOP (LOW RISK)
+                  2) Rejection
+                  •   Rejection required so that we know in SNR Zone have a
+                      big order.
+                  • Can we entry after rejection?
+                  • After rejection we still can’t Entry. We have to wait (SOP
+                    3 Confirmation).
+                  3) Confirmation
+
+                  • Candle confirmation required so we know that
+                    Buyer,Seller has entered the position like
+                    (Bullish Engulfing) or (Bearish Engulfing).
+
+                  • After find out the confirmation we will play Multi Time
+                    Frame to find the Setup.
+
+ ENTRY USING
+                  4) Setup
+5SOP (LOW RISK)
+                  • The price usually will Reversal setup like
+                    (Qmr,Manipulation,Blindsport).
+
+                  • Setup required so that we know where we want put the
+                    SL, TP, PO .
+
+
+                  5) Entry
+Reversal Setup + 5SOP
+  Resisstance W1   Rejection
+                                                         HH
+                   Engulfing D1
+                                                 H             Entry
+
+                                  Setup H4/H1
+                                                     L                 *Setup which always appears
+                                                                       Reversal, QMR,Manipulation,
+                                                                       Blindsport
+                                                              LL
+                                                              HH
+
+                                                                       *Setup which always appears
+                                                     H                 Reversal, QMR,Manipulation,
+                                   Setup H4/H1
+                                                                       Blindsport
+
+                                                 L             Entry
+                   Engulfing D1
+    Support W1     Rejection                             LL
+QMR H4
+D1 Blindsport
+Breakout Zone + 5SOP
+• What means breakout zone? It’s means Support/Resistance zone is already breakout
+ because in that zone don’t have the order.
+
+• When Support/Resistance zone is alredy breakout, that zone will get a new order. When
+ have a new order, we will looking for chance to entry.
+
+• And how we want to know in that zone have a new order?
+
+• When the price has entered the zone we will find 5SOP.
+BREAKOUT ZONE 1 SELL
+
+                                      Rejection
+                                                  Confirmation
+
+
+                       S
+                                                        SETUP
+                                                        Qmr
+                           Breakout
+                                                        Manipulation
+                                                        Blindsport
+
+
+BREAKOUT ZONE 2 SELL
+                                      Rejection
+                                                  Confirmation
+
+
+                                  S                     SETUP
+                                                        Qmr
+                                                        Manipulation
+                           Breakout                     Blindsport
+QMR H4
+BREAKOUT ZONE 1 BUY
+
+
+                                                  SETUP
+                          Breakout                Qmr
+                                                  Manipulation
+                      R                           Blindsport
+
+                                                 Confirmation
+
+                                     Rejection
+
+BREAKOUT ZONE 2 BUY
+
+
+
+                          Breakout                 SETUP
+                                                   Qmr
+                                                   Manipulation
+                               R                   Blindsport
+
+                                                 Confirmation
+
+                                     Rejection
+Blindsport H1
+QMR H4
+ENTRY USING SNR(HIGHT RISK)
+
+• This entry was hight risk because don’t use (5SOP).
+
+• This entry can use only for big Time Frame (MN/W1/D1) .
+
+• This setup can’t use under Time Frame D1 .
+
+• This entry just need to find the strongest (SNR).
+
+• This entry must be in the Body SNR and Stoploss at the up/bottom Shadow SNR.
+               DAILY                                   WEEKLY                                 MONTHLY
+
+        R                                        R                                       R
+
+
+
+
+ENTRY
+
+
+
+
+ENTRY
+
+
+
+
+        S                                         S                                      S
+
+Time Frame (D1) mark the Zone (SNR).       After changed the TF (W1) mark the    Started from Time Frame (MN) and mark
+After marked the Zone, can Entry at the   Zone (SNR) W1, after marked the Zone     the zone (SNR), after marked the zone
+        Support or Resisstance                    come down to TF (D1)                (SNR) come down to TF (W1) .
+GREEN COLOUR TF D1
+BROWN COLOUR TF W1
+GOLD COLOUR TF MN
+GOLD COLOUR TF MN
+BROWN COLOUR TF W1
+GREEN COLOUR TF D1
+SCALPING GOLD
+• SNR Mini + QM Reversal .
+
+• For scalping usually the price must be in the Range sideway.
+
+• We will looking for the SNR zone at the Time Frame (H1) and (H4) only.
+
+• For scalping,we don’t need the direction at the big Time frame. Enough of the SNR (H1) and
+  (H4) .
+
+• The zone at (H1) and (H4) should have 2nd Movement. When the price has entered the
+  zone, we will go to the Time Frame (M1) to looking for QMR/Manipulation.
+
+• This scalping usually will give us take profit approximately 20/50/100 Pips .
+R   H1/H4
+                       Time Frame
+                    HH M1/M5
+
+            H            Entry         *SNR Mini + QM Reversal
+
+                L
+                         LL
+
+
+
+
+                         HH
+
+            H
+                                       *SNR Mini + QM Reversal
+            L             Entry
+
+
+                    LL    Time Frame
+S   H1/H4                 M1/M5
+“SIMPLE SYSTEMS EXECUTED WITH THE BEST DISCIPLINE CAN BE THE
+                     MOST PROFITABLE”
+
+
+
+
+                         SEKIAN, TERIMA KASIH.
+                                BY
+                           NAJMI FIRDAUS
+

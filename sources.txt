@@ -1,0 +1,2 @@
+build/gen/com/mirul/tvmarket/R.java
+app/src/main/java/com/mirul/tvmarket/MainActivity.java

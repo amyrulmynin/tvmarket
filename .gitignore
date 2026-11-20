@@ -9,3 +9,6 @@ build/
 sdk/
 android-src/assets/web/index.html
 *.apk
+cmdtools.zip
+node_modules/
+cmdtools.zip

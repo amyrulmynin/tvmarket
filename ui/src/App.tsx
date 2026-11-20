@@ -48,6 +48,8 @@ type BystraPlan = {
   bias: 'bull' | 'bear'; setup: string; ck: string | null;
   entry: number; sl: number; tp1: number; tp2: number;
   riskPips: number; rr1: number; rr2: number; confidence: number; atr: number;
+  outcome?: string; stale?: boolean; distAtr?: number; distFromEntry?: number;
+  priceNow?: number; entryAnchorTime?: number;
 }
 type BystraSignal = {
   name: string; bias: 'bull' | 'bear'; kind?: string; risk?: string;
@@ -219,6 +221,18 @@ function BystraPanel({ report, err }: {
                 <span>Risiko <b>{nf(p.riskPips)}</b></span>
                 <span>ATR <b>{nf(p.atr)}</b></span>
               </div>
+
+              {(p.outcome || p.stale != null) && (
+                <div className={`by-status ${p.outcome === 'tp1_hit' ? 'win'
+                  : p.outcome === 'sl_hit' ? 'loss'
+                  : p.stale ? 'stale' : 'live'}`}>
+                  {p.outcome === 'tp1_hit' ? '✓ TP1 kena'
+                    : p.outcome === 'sl_hit' ? '✗ SL kena'
+                    : p.stale ? `⚠ Signal basi (${p.distAtr != null ? p.distAtr.toFixed(1) : ''} ATR dari entry)`
+                    : `● LIVE (${p.distAtr != null ? Math.abs(p.distAtr).toFixed(1) : ''} ATR)`}
+                  {p.priceNow != null && <span className="by-status-price">kini {nf(p.priceNow)}</span>}
+                </div>
+              )}
             </div>
           ) : (
             <div className="by-plan">
@@ -345,7 +359,7 @@ function ScalpPanel({ report }: { report: BystraReport | null }) {
               <span className="by-muted">Tiada signal dalam penapis ini.</span>
             )}
             {shown.map((s, k) => (
-              <div key={k} className="by-row by-sig">
+              <div key={k} className={`by-row by-sig ${s.status === 'closed' ? 'old' : ''}`}>
                 <span className={`by-dot ${s.bias}`} />
                 <span className="by-row-name">{s.name}</span>
                 <span className="by-sig-time">

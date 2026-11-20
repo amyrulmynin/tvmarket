@@ -1,0 +1,489 @@
+#homework
+ BYSTRA
+GOLD Perfect Entry
+ SNR CONTINUATION
+                                                   Low Risk
+ Setup Rule
+ 1.   After Reversal
+ 2.   Strong SNR (A/V Capital Letter)
+ 3.   RBR/DBD align with A/V Capital Letter
+
+
+
+
+                                                              Strong Resistance
+                             DBD                              (A Capital Letter)
+                                              Entry Point
+
+ Strong Support                                                                          Entry Point
+(V Capital Letter)                                                                 RBR
+  SNR CONTINUATION
+  Sell Setup
+
+
+
+                     Drop Base Drop                                      Drop Base Drop
+
+                                      Entry Point                                         Entry Point
+
+
+ Strong Support                                      Strong Support
+(V Capital Letter)                                  (V Capital Letter)
+SNR CONTINUATION
+Buy Setup
+
+
+
+
+                                                       Strong Resistance
+                                                       (A Capital Letter)
+ Strong Resistance
+ (A Capital Letter)
+                                                                                               Entry Point
+                                         Entry Point
+                                                                            Rally Base Rally
+                      Rally Base Rally
+QM CONTINUATION
+                                              Low Risk
+Setup Rule
+1.   After Reversal
+2.   HH/LL touch TL at 2nd touch
+3.   Entry at 3rd touch TL
+
+      1st
+
+
+                            2nd
+                               HH                                                   HH
+                  H                     3rd
+                                                 Entry Point
+                                                                         H
+
+
+
+
+                      L
+                                                                                               Entry Point
+                                                                     L                   3rd
+                                   LL                                          LL
+                                                                             2nd
+
+
+                                                               1st
+QM CONTINUATION
+Sell Setup
+
+
+                                                           1st
+
+                                                                     HH
+             1st
+                                                                          2nd
+                       HH                                        H                   3rd   Entry Point
+                            2nd
+                   H                   3rd   Entry Point
+                                                                     L
+
+
+                       L                                                        LL
+
+
+                                  LL
+      QM CONTINUATION
+      Buy Setup
+
+
+
+
+                              HH
+                                                                                HH
+
+
+
+               H
+
+                                                                 H
+
+
+
+                                         Entry Point
+                                   3rd
+           L             LL
+                                                                                           Entry Point
+                   2nd
+                                                                                     3rd
+1st                                                          L             LL
+                                                                     2nd
+
+                                                       1st
+ SNR CONTINUATION V2
+                                                            Low Risk
+ Setup Rule
+ 1.   After Reversal
+ 2.   Strong SNR (A/V Capital Letter)
+ 3.   RBD/DBR align with A/V Capital Letter
+
+
+
+
+                                                                       Strong Resistance
+                           RBD/BE                                      (A Capital Letter)
+                                              Entry Point
+
+ Strong Support                                                                                       Entry Point
+(V Capital Letter)                                                                          DBR/BuE
+    SNR CONTINUATION V2
+    Sell Setup
+
+
+               Rally Base Drop
+                                 Entry Point
+                                                              Rally Base Drop
+                                                                                Entry Point
+
+
+
+
+ Strong Support
+(V Capital Letter)
+                                                Strong Support
+                                               (V Capital Letter)
+SNR CONTINUATION V2
+Buy Setup
+
+
+
+
+                                             Strong Resistance
+Strong Resistance
+                                             (A Capital Letter)
+(A Capital Letter)
+
+
+
+
+                                                                              Entry Point
+                               Entry Point
+                     Drop Base Rally
+                                                                  Drop Base Rally
+QM REVERSAL
+                                                            High Risk
+Setup Rule
+1.     End of Trend
+2.     Break Bullish/Bearish Trendline
+3.     Entry Point at RBR/DBD align with last High/Low
+4.     Best setup if BIG TF on Bullish/Bearish Engulfing
+
+                     HH                                                 Bearish
+                                                                                                HH
+                                                                                  H
+
+       H                    DBD/BE
+                                                   Entry Point
+
+                                                                                                     Entry Point
+                                                                          L
+                                                                                           RBR/BuE
+               L
+                                   LL
+     Bullish                                                                          LL
+QM REVERSAL
+Sell Setup
+
+                 HH
+                                                   HH
+        H             DBD   Entry Point
+                            Entry  Point   H            DBD   Entry Point
+
+
+
+             L
+                       LL                      L
+                                                         LL
+QM REVERSAL
+Buy Setup
+
+
+
+
+                               HH
+                                                                                           HH
+                      H
+            CK2
+                                                                                 H
+
+
+
+
+                  L            RBR   Entry Point
+                                                                             L             RBR   Entry Point
+
+
+
+
+                          LL                                                          LL
+
+
+
+                                                   BULLISH ENGULFINGS ON BIG TF
+                                                   Small TF QMR, RBR Align with L, CK2.
+                                                   Full Margin Setup
+ QM FAILED / TAK CANTIK
+                                                               High Risk
+ Setup Rule
+ 1.   End of Trend
+ 2.   Break Bullish/Bearish Trendline
+ 3.   Entry point at RBR/DBD align with previous entry point
+ 4.   Best setup if BIG TF on Bullish/Bearish Engulfing
+
+
+               HH
+                                                                           Bearish
+
+                                                                                                    HH
+                                                                                     H
+  H                   DBD/BE
+
+
+
+                                       RBR                Entry Point                                    DBD
+                                                                                          RBR/BuE              Entry Point
+
+
+                                                                                 L
+          L
+                              LL
+Bullish
+
+                                                                                         LL
+     QM FAILED / TAK CANTIK
+     Sell Setup
+
+                                   HH
+
+
+
+
+                          H
+                                                         New Entry Point (DBD)   BULLISH ENGULFINGS ON BIG TF (D1)
+                                    Failed Entry Point
+                                                                                 Small TF QMC (Failed Entry Point). Align with DBD
+                      L                                                          Full Margin Setup
+
+
+                              LL
+
+
+
+
+Small TF (H1) - QMC
+ QM FAILED / TAK CANTIK
+ Buy Setup
+
+
+
+Small TF (H1)
+
+
+
+
+                    HH
+
+                H          Failed
+                         Entry Point
+
+                                       New Entry Point (RBR)
+                    L
+
+
+                                                               BULLISH ENGULFINGS ON BIG TF (D1)
+                                                               Small TF QMF, RBR Align with H (Failed Entry Point)
+                              LL                               Full Margin Setup
+MANIPULATION
+                                   High Risk
+Setup Rule
+1.   After reversal. High Risk on Reversal
+2.   Bullish/Bearish Engulfing on BIG Time Frame
+3.   Entry point at RBR/DBD inside Engulf Candle
+
+
+
+
+              BE at Big TF
+
+
+
+
+                   DBD
+                                                   Entry Point
+                                                                                 Entry Point
+                                                                       RBR
+
+
+
+
+                                                                 BuE at Big TF
+MANIPULATION
+Sell Setup
+
+
+
+
+   BIG Time Frame (D1) :   Small Time Frame (H4) :
+      Bearish Engulfing       Drop Base Drop
+ MANIPULATION
+ Buy Setup
+
+
+
+
+                        Small Time Frame (H4) :
+                           Rally Base Rally
+BIG Time Frame (D1) :
+   Bullish Engulfing
+CONFLUENCES KUASA 2 (CK2)
+                                                             Entry Confirmation
+Rule
+1.   Define Entry Point (QMC, SNRC, SNCR2, Manipulation)
+2.   Sell Setup : Marking 2 Support (Main Trend Line)
+3.   Buy Setup : Marking 2 Resistance (Main Trend Line)
+
+
+
+
+               2nd TL
+
+
+
+                                                                                   Main Trendline
+                                                  Entry Point (QMC)
+                                                                                              2R
+                             2S
+                                                                                                    Entry Point (QMC)
+                 Main Trendline
+
+
+
+                                                                                  2nd TL
+CONFLUENCES KUASA 2 (CK2)
+Sell Setup
+
+
+
+             2nd TL
+
+
+
+
+                                       Entry Point (QMC)
+
+
+
+
+                      Main Trendline
+CONFLUENCES KUASA 2 (CK2)
+Sell Setup
+
+
+
+                              2nd TL
+
+
+
+                                       Entry Point (SNRC2)
+
+
+
+
+             Main Trendline
+CONFLUENCES KUASA 2 (CK2)
+Buy Setup
+
+
+
+
+            Main Trendline
+
+
+
+
+                                      Entry Point (QMC)
+
+
+                             2nd TL
+CONFLUENCES KUASA 2 (CK2)
+Buy Setup
+
+
+
+
+            Main Trendline
+
+
+
+
+                                  Entry Point (SNRC2 or
+                                  QMR Failed)
+
+
+
+                         2nd TL
+CONFLUENCES KUASA 3 (CK3)
+                                                             Entry Confirmation
+Rule
+1.   Define Entry Point (QMC, SNRC, SNCR2, Manipulation)
+2.   Sell Setup : Marking 2 Support (Main Trend Line)
+3.   Buy Setup : Marking 2 Resistance (Main Trend Line)
+4.   Bullish/Bearish Engulfing on Big Time Frame
+
+
+
+               2nd TL
+                              BE at Big TF
+
+
+                                                                                  Main Trendline
+                                                  Entry Point (QMC)
+
+                                                                                                                   Entry Point (QMC)
+             Main Trendline
+
+
+                                                                                                   BuE at Big TF
+                                                                                    2nd TL
+CONFLUENCES KUASA 3 (CK3)
+Sell Setup
+                      2nd TL
+                               QMR Inside BE Body Candle
+                                          Small TF : QMR
+
+
+
+
+     Main Trendline
+
+
+                                                           BIG Time Frame (D1) :
+                                                           Bearish Engulfing
+CONFLUENCES KUASA 3 (CK3)
+Buy Setup
+
+
+
+
+                                                    AUDUSD D1
+
+
+
+
+Main Trendline
+
+
+
+
+                      Small Time Frame (H4) : QMC
+                      QMC Inside BuE Body Candle
+                                                    BIG Time Frame (D1) :
+                                                    Bullish Engulfing
+             2nd TL
+

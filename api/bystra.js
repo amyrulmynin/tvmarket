@@ -562,16 +562,23 @@ function scanSignals(candles, opts = {}) {
     const swingRef = bull
       ? (swLocal.filter((x) => x.type === 'L').slice(-1)[0] || { price: entry - atrLocal * 1.5 }).price
       : (swLocal.filter((x) => x.type === 'H').slice(-1)[0] || { price: entry + atrLocal * 1.5 }).price;
-    const buf = atrLocal * 0.5;
-    const rawSl = bull ? Math.min(swingRef - buf, entry - atrLocal * 1.2) : Math.max(swingRef + buf, entry + atrLocal * 1.2);
-    const sl = bull ? Math.max(rawSl, entry - atrLocal * 2.5) : Math.min(rawSl, entry + atrLocal * 2.5);
-    const risk = Math.abs(entry - sl) || atrLocal;
+    const buf = atrLocal * 0.15;
+    // SL di luar swing TAPI jarak dikawal 0.8–1.5 ATR (risiko scalping munasabah)
+    const minRisk = atrLocal * 0.8;
+    const maxRisk = atrLocal * 1.5;
+    let risk = bull ? entry - swingRef + buf : swingRef - entry + buf;
+    if (!isFinite(risk) || risk < minRisk) risk = minRisk;
+    if (risk > maxRisk) risk = maxRisk;
+    const sl = bull ? entry - risk : entry + risk;
     const tp1 = bull ? entry + risk : entry - risk;
     const nextSw = bull
       ? swLocal.filter((x) => x.type === 'H' && x.price > entry).slice(-1)[0]
       : swLocal.filter((x) => x.type === 'L' && x.price < entry).slice(-1)[0];
+    // TP2: swing seterusnya, tapi cap 2.5 R supaya R:R kekal realistik
     const tp2raw = nextSw ? nextSw.price : (bull ? entry + risk * 2 : entry - risk * 2);
-    const tp2 = bull ? Math.max(tp2raw, tp1 + risk * 0.5) : Math.min(tp2raw, tp1 - risk * 0.5);
+    const tp2cap = bull ? entry + risk * 2.5 : entry - risk * 2.5;
+    const tp2 = bull ? Math.min(Math.max(tp2raw, tp1 + risk * 0.5), tp2cap)
+      : Math.max(Math.min(tp2raw, tp1 - risk * 0.5), tp2cap);
 
     const age = lastIdx - s.i;
     const status = age <= 5 ? 'active' : age <= 20 ? 'fresh' : 'closed';
@@ -782,36 +789,61 @@ function analyze(candles, opts = {}) {
 
   const top = scored[0] || null;
 
-  // Trade plan ikut disiplin Bystra: SL di luar structure swing近, TP1 = 1R, TP2 = swing next
+  // Trade plan ikut disiplin Bystra: SL di luar structure swing, TP1 = 1R, TP2 = swing next.
+  // PENTING: entry diikat pada candle SETUP yang sudah tutup (bukan harga semasa),
+  // supaya entry/SL/TP tidak berubah setiap kali candle terakhir bergerak.
   let plan = null;
   if (top) {
-    const buf = atr * 0.5;
     const bull = top.bias === 'bull';
-    // swing reference: swing terakhir yang relevan (bukan minimum 12 candle penuh)
-    const recentSw = swings.filter((s) => s.i >= lastIdx - 15);
+    const sIdx = Math.min(top.i, c.length - 1);
+    // ATR pada masa setup (bukan ATR live) — supaya plan stabil
+    const aFrom = Math.max(0, sIdx - 14);
+    const atrS = c.slice(aFrom, sIdx + 1).reduce((a, x) => a + range(x), 0) / (sIdx + 1 - aFrom) || atr;
+    const entry = c[sIdx].close;              // <-- anchored, tidak berubah
+    // swing reference: swing sekitar masa setup
+    const recentSw = swings.filter((s) => s.i >= sIdx - 15 && s.i <= sIdx + 5);
     const swingRef = bull
-      ? (recentSw.filter((s) => s.type === 'L').slice(-1)[0] || { price: price - atr }).price
-      : (recentSw.filter((s) => s.type === 'H').slice(-1)[0] || { price: price + atr }).price;
-    const entry = price;
-    // SL: minimum 1 ATR dari entry, di luar swing; cap jarak supaya R:R masih munasabah
-    const rawSl = bull ? Math.min(swingRef - buf, entry - atr * 1.2) : Math.max(swingRef + buf, entry + atr * 1.2);
-    const maxSlDist = atr * 2.5;
-    const sl = bull ? Math.max(rawSl, entry - maxSlDist) : Math.min(rawSl, entry + maxSlDist);
-    const risk = Math.abs(entry - sl) || atr;
+      ? (recentSw.filter((s) => s.type === 'L').slice(-1)[0] || { price: entry - atrS }).price
+      : (recentSw.filter((s) => s.type === 'H').slice(-1)[0] || { price: entry + atrS }).price;
+    const buf = atrS * 0.15;
+    // SL: di luar swing TAPI jarak dikawal 0.8–1.5 ATR (scalping R:R munasabah).
+    // Tidak lagi ikut swing yang jauh — kalau swing terlalu jauh, tetap cap 1.5 ATR.
+    const minRisk = atrS * 0.8;
+    const maxRisk = atrS * 1.5;
+    let risk = bull ? entry - swingRef + buf : swingRef - entry + buf;
+    if (!isFinite(risk) || risk < minRisk) risk = minRisk;
+    if (risk > maxRisk) risk = maxRisk;
+    const sl = bull ? entry - risk : entry + risk;
     const tp1 = bull ? entry + risk : entry - risk;
-    // TP2: swing seterusnya (liquidity pool) atau 2R
+    // TP2: swing seterusnya, tapi cap 2.5 R supaya R:R kekal realistik
     const nextSw = bull
       ? recentSw.filter((s) => s.type === 'H' && s.price > entry).slice(-1)[0]
       : recentSw.filter((s) => s.type === 'L' && s.price < entry).slice(-1)[0];
     const tp2raw = nextSw ? nextSw.price : (bull ? entry + risk * 2 : entry - risk * 2);
-    const tp2 = bull ? Math.max(tp2raw, tp1 + risk * 0.5) : Math.min(tp2raw, tp1 - risk * 0.5);
+    const tp2cap = bull ? entry + risk * 2.5 : entry - risk * 2.5;
+    const tp2 = bull ? Math.min(Math.max(tp2raw, tp1 + risk * 0.5), tp2cap)
+      : Math.max(Math.min(tp2raw, tp1 - risk * 0.5), tp2cap);
+    // jarak harga semasa dari entry (untuk tahu signal masih hampir atau sudah jauh)
+    const distNow = price - entry;
+    const distAtr = atrS ? distNow / atrS : 0;
+    // signal stale: harga sudah bergerak jauh dari entry
+    const stale = Math.abs(distAtr) > 1.5;
     plan = {
       bias: top.bias, setup: top.name, ck: top.ck,
       entry: +entry.toFixed(3), sl: +sl.toFixed(3), tp1: +tp1.toFixed(3), tp2: +tp2.toFixed(3),
       riskPips: +risk.toFixed(3),
       rr1: 1, rr2: +(Math.abs(tp2 - entry) / risk).toFixed(2),
       confidence: top.conf,
-      atr: +atr.toFixed(3),
+      atr: +atrS.toFixed(3),
+      // info tambahan (entry tetap terkunci di candle setup)
+      entryAnchorTime: c[sIdx].time,
+      priceNow: +price.toFixed(3),
+      distFromEntry: +distNow.toFixed(3),
+      distAtr: +distAtr.toFixed(2),
+      stale,
+      // status downstream: harga sudah capai TP1/SL?
+      outcome: price >= tp1 && bull ? 'tp1_hit' : price <= tp1 && !bull ? 'tp1_hit'
+        : price <= sl && bull ? 'sl_hit' : price >= sl && !bull ? 'sl_hit' : 'running',
     };
   }
 

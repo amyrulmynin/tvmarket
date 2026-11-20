@@ -424,20 +424,58 @@ const server = http.createServer(async (req, res) => {
       const snap = await snapshotCandles(sym, iv, n);
       let htfConfirm = null;
       let htfTrend = null;
+      let htfDirection = null;
+      let htfIv = null;
       if (useHtf) {
         try {
           const hiv = HTF_OF[iv] || null;
           if (hiv) {
+            htfIv = hiv;
             const hs = await snapshotCandles(sym, hiv, Math.min(n, 120));
             const hr = bystra.analyze(hs.candles, { interval: hiv });
-            if (hr.ok) { htfTrend = hr.trend; htfConfirm = hr.trend === 'up' ? 'bull' : hr.trend === 'down' ? 'bear' : null; }
+            if (hr.ok) {
+              htfTrend = hr.trend;
+              htfDirection = hr.direction || null;
+              htfConfirm = hr.trend === 'up' ? 'bull' : hr.trend === 'down' ? 'bear' : null;
+              if (!htfConfirm && hr.direction) htfConfirm = hr.direction.bias;
+            }
           }
         } catch (e) { /* HTF gagal tidak halang LTF */ }
       }
       const report = bystra.analyze(snap.candles, {
         symbol: snap.symbol, interval: iv, htfConfirm,
       });
-      return json(res, 200, { ...report, htf: { interval: HTF_OF[iv] || null, trend: htfTrend } });
+
+      // SISD (Nora) — Direction (DMD) di HTF + setup searah di LTF, dalam zon DMD HTF.
+      // Setup mesti berada di dalam / berhampiran zon DMD HTF (beri toleransi 1.5 ATR LTF).
+      if (htfDirection && htfDirection.zone && report.ok) {
+        const hz = htfDirection.zone;
+        const lAtr = report.atr || 1;
+        const tol = lAtr * 1.5;
+        const nested = (report.setups || []).filter((s) =>
+          s.bias === htfDirection.bias && (
+            (s.zone && Math.min(s.zone.top, hz.top + tol) - Math.max(s.zone.bottom, hz.bottom - tol) > 0) ||
+            (s.level != null && s.level >= hz.bottom - tol && s.level <= hz.top + tol) ||
+            (report.price >= hz.bottom - tol && report.price <= hz.top + tol)
+          )
+        );
+        if (nested.length) {
+          report.sisd = [{
+            name: 'SISD', bias: htfDirection.bias, directionType: htfDirection.type,
+            htf: htfIv, ltf: iv, inner: nested.slice(0, 3).map((x) => x.name),
+            zone: hz,
+          }];
+          // SISD merentas TF = kualiti tertinggi: naikkan keyakinan plan jika searah
+          if (report.plan && report.plan.bias === htfDirection.bias) {
+            report.plan.confidence = Math.min(98, report.plan.confidence + 8);
+            report.plan.sisd = true;
+          }
+        }
+      }
+      return json(res, 200, {
+        ...report,
+        htf: { interval: HTF_OF[iv] || null, trend: htfTrend, direction: htfDirection },
+      });
     }
     if (u.pathname === '/api/search') {
       const q = u.searchParams.get('q');

@@ -416,7 +416,67 @@ function findSNR(candles, swings, tolPct = 0.0012) {
     .sort((a, b) => Math.abs(a.distancePct) - Math.abs(b.distancePct));
 }
 
-// ---------------------------------------------------------------- confluence
+/**
+ * SISD — Setup Inside Setup Direction (Nora Personal Coaching).
+ * Direction (DMD) di HTF, setup (QMR/MEF/BSD/QMC) searah DI DALAM zon DMD itu,
+ * lalu setup LTF lebih kecil searah lagi = nested setup = signal kualiti tertinggi.
+ * Zon DMD = antara dua badan marubozu; setup berlaku di dalam zon atau melekat pada sempadannya.
+ */
+function detectSISD(dmd, setups, tolPct = 0.004) {
+  const out = [];
+  for (const d of dmd) {
+    const zTop = d.zone.top, zBot = d.zone.bottom;
+    const zMid = (zTop + zBot) / 2;
+    const zSpan = Math.max(zTop - zBot, zMid * tolPct * 4); // minimum span supaya tak 0
+    // setup di dalam zon: level atau zone-nya bertindan zon DMD (biasa > 50% overlap)
+    const inside = setups.filter((s) => {
+      if (s.bias !== d.bias) return false;
+      if (s.i < d.i - 2 || s.i > d.i + 60) return false;
+      const sz = s.zone;
+      if (sz) {
+        // overlap zon setup dengan zon DMD
+        const overlap = Math.min(sz.top, zTop) - Math.max(sz.bottom, zBot);
+        if (overlap > 0) return true;
+      }
+      if (s.level != null && s.level >= zBot - zSpan && s.level <= zTop + zSpan) return true;
+      return false;
+    });
+    if (inside.length >= 1) {
+      out.push({
+        name: 'SISD',
+        bias: d.bias,
+        i: d.i,
+        time: d.time,
+        kind: 'continuation',
+        risk: 'low',
+        directionType: d.type,
+        inner: inside.map((s) => s.name || s.type).slice(0, 4),
+        zone: d.zone,
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * HH/LL Break validation (Nora: "Make sure HH or LL break only").
+ * Break yang overshoot terlalu dalam ("reached too low") = high risk.
+ * Hanya ukur lilin SELEPAS swing itu pecah, dan guna wick (bukan close) sebagai ukuran depth,
+ * sebab "reached too low" = badan lilin terbenam jauh di bawah/atas zon.
+ */
+function validateBreak(candles, level, dir, overshootAtr = 1.5, atr, fromIdx = 0) {
+  // dir 'HH' = break atas (bull), 'LL' = break bawah (bear)
+  const beyond = [];
+  for (let i = fromIdx; i < candles.length; i++) {
+    const c = candles[i];
+    if (dir === 'HH' && c.high > level) beyond.push(c.high - level);
+    if (dir === 'LL' && c.low < level) beyond.push(level - c.low);
+  }
+  if (!beyond.length) return { clean: false, overshoot: false, depth: 0 };
+  const depth = Math.max(...beyond);
+  const overshoot = depth > atr * overshootAtr;
+  return { clean: true, overshoot, depth: +depth.toFixed(3) };
+}
 /**
  * CK1/CK2/CK3 — tahap confluence (CLAB).
  *   CK1 = SNR kuat + trendline
@@ -513,7 +573,7 @@ function analyze(candles, opts = {}) {
 
   // Calon setup terkini
   const recent = (arr, n = 30) => arr.filter((x) => x.i >= lastIdx - n);
-  const candidates = [
+  const baseCands = [
     ...recent(qm).map((x) => ({ ...x, name: 'QMR', risk: 'high' })),
     ...recent(qmc),
     ...recent(bases).map((x) => ({
@@ -523,7 +583,19 @@ function analyze(candles, opts = {}) {
     })),
     ...recent(bs),
     ...recent(mef),
-  ].sort((a, b) => b.i - a.i);
+  ];
+
+  // SISD — Setup Inside Setup Direction (Nora): DMD + setup searah di dalam zon
+  const sisd = detectSISD(dmd, baseCands).filter((x) => x.i >= lastIdx - 40);
+  const candidates = [...baseCands, ...sisd].sort((a, b) => b.i - a.i);
+
+  // Break validation (Nora: "Make sure HH or LL break only"; overshoot = high risk)
+  const lastH = swings.filter((s) => s.type === 'H').slice(-1)[0];
+  const lastL = swings.filter((s) => s.type === 'L').slice(-1)[0];
+  const breakChk = {
+    HH: lastH ? validateBreak(c, lastH.price, 'HH', 1.5, atr, Math.min(lastH.i + 2, c.length - 1)) : null,
+    LL: lastL ? validateBreak(c, lastL.price, 'LL', 1.5, atr, Math.min(lastL.i + 2, c.length - 1)) : null,
+  };
 
   // Skor signal: direction + setup + confluence
   const scored = candidates.slice(0, 12).map((s) => {
@@ -542,10 +614,14 @@ function analyze(candles, opts = {}) {
     let conf = 25 + score * 12 + sopN * 10;
     if (agreesDir) conf += 12;
     if (agreesDir === false) conf -= 12;
-    // setup yang memang low-risk (QMC/SNRC) +/-, high-risk (QMR/MEF/BSD) -
+    // setup yang memang low-risk (QMC/SNRC/SISD) +/-, high-risk (QMR/MEF/BSD) -
     if (s.risk === 'low') conf += 5;
     if (s.risk === 'high') conf -= 6;
     if (s.risk === 'high' && sopN >= 3) conf += 8; // HTF confirm selamatkan high-risk
+    if (s.name === 'SISD') conf += 10; // nested setup = kualiti tertinggi
+    // Nora: overshoot HH/LL berlebihan = high risk, potong conf
+    const overs = s.bias === 'bull' ? breakChk.HH : breakChk.LL;
+    if (overs && overs.overshoot) conf -= 10;
     // setup lebih lama = kurang relevan
     conf -= Math.min(15, (lastIdx - s.i) * 1.5);
     return { ...s, ck, conf: Math.max(5, Math.min(98, Math.round(conf))), agreesDir, sopN };
@@ -607,6 +683,8 @@ function analyze(candles, opts = {}) {
     snr: snr.slice(0, 6),
     engulfing: lastEngulf ? { bias: lastEngulf.bias, i: lastEngulf.i, type: lastEngulf.type } : null,
     rejections: recentRej.slice(-3),
+    sisd: sisd.slice(0, 4),
+    breakCheck: breakChk,
     sop,
     sopScore: { bull: sopCount('bull'), bear: sopCount('bear') },
     setups: scored.slice(0, 6).map((s) => ({
@@ -622,6 +700,6 @@ function analyze(candles, opts = {}) {
 
 module.exports = {
   analyze, findSwings, trendOf, detectDMD, detectBases, detectQM, detectQMC,
-  detectBlindspot, detectMEF, findSNR, gradeConfluence,
+  detectBlindspot, detectMEF, findSNR, gradeConfluence, detectSISD, validateBreak,
   isMarubozu, engulf, isBase,
 };

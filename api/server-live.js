@@ -347,8 +347,41 @@ setInterval(async () => {
 }, 5000);
 
 // ====== Router ======
+const fs = require('fs');
+const path = require('path');
+const UI_DIR = path.join(__dirname, '..', 'app', 'src', 'main', 'assets', 'web');
+const MIME = {
+  '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css',
+  '.svg': 'image/svg+xml', '.png': 'image/png', '.ico': 'image/x-icon', '.json': 'application/json',
+};
+
+function serveUI(res, pathname) {
+  const file = path.join(UI_DIR, pathname === '/' || pathname === '/index.html' ? 'index.html' : pathname);
+  if (pathname !== '/' && pathname !== '/index.html' && fs.existsSync(file) && fs.statSync(file).isFile()) {
+    res.writeHead(200, { 'Content-Type': MIME[path.extname(file)] || 'application/octet-stream' });
+    return fs.createReadStream(file).pipe(res);
+  }
+  let html;
+  try { html = fs.readFileSync(path.join(UI_DIR, 'index.html'), 'utf8'); }
+  catch (e) {
+    res.writeHead(503, { 'Content-Type': 'text/plain; charset=utf-8' });
+    return res.end('UI belum dibina. Jalankan npm run build dahulu.');
+  }
+  const hosts = JSON.stringify(['', 'https://tvmarket-api.mudahpays.my.id']);
+  const key = process.env.TV_API_KEY || '';
+  const inject = `<script>window.__TV_API_HOSTS=${hosts};window.__TV_API_KEY=${JSON.stringify(key)};</script>`;
+  html = html.replace('</head>', inject + '</head>');
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+  res.end(html);
+}
+
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, `http://${req.headers.host}`);
+
+  // UI web — disajikan terus dari API server (satu origin, tiada CORS)
+  if (u.pathname === '/' || u.pathname === '/index.html' || u.pathname === '/favicon.svg') {
+    return serveUI(res, u.pathname);
+  }
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {

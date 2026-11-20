@@ -8,13 +8,18 @@ import { Badge } from './arc/badge/badge'
 // Senarai host API. #1 = tunnel HTTPS (sama untuk SEMUA client: web + APK).
 // Dicuba mengikut turutan; kalau satu gagal, cuba seterusnya.
 // Nota: Cloudflare buffer SSE body, jadi kita guna polling pendek (2s) untuk live.
-const API_HOSTS = [
+// Bila UI di-serve dari web (http/https), guna origin sendiri ('') supaya
+// tiada CORS / mixed-content dan API key tak perlu didedah ke browser.
+// Senarai host disuntik oleh server. APK (file://) guna senarai hardcoded.
+declare global {
+  interface Window { __TV_API_HOSTS?: string[]; __TV_API_KEY?: string }
+}
+const API_HOSTS = (typeof window !== 'undefined' && window.__TV_API_HOSTS) || [
   'https://tvmarket-api.mudahpays.my.id',
   'https://maine-roulette-throws-qty.trycloudflare.com',
   'http://43.134.97.197:8080',
 ]
-
-const API_KEY = 'QvEswB9dSDRtg6MwF_f8Uwt9_XONmbeFeG--IEwq80Y'
+const API_KEY = (typeof window !== 'undefined' && window.__TV_API_KEY) || 'QvEswB9dSDRtg6MwF_f8Uwt9_XONmbeFeG--IEwq80Y'
 
 const SYMBOL = 'OANDA:XAUUSD'
 

@@ -249,9 +249,9 @@ function detectBlindspot(candles, atrPct = 0.0015) {
 }
 
 /**
- * MEF — Manipulation Entry Formula (sapuan stop-loss / liquidity sweep).
+ * MEF/Manipulation — sapuan stop-loss / liquidity sweep (Najmi: reversal, higher risk dari QMR).
  * Wick menembusi swing sebelum ini lalu close kembali di dalam.
- * Perlu penembusan >= 0.1 ATR dan close balik dengan margin.
+ * Perlu penembusan >= 0.1% dan close balik dengan margin.
  */
 function detectMEF(candles, swings, atrPct = 0.001) {
   const out = [];
@@ -274,7 +274,100 @@ function detectMEF(candles, swings, atrPct = 0.001) {
   return out;
 }
 
+/**
+ * Najmi 5SOP — SOP 2: Rejection.
+ * Harga masuk zon SNR lalu "ditolak" (wick menembusi tapi close kembali luar zon).
+ * Support: low masuk zon bawah, close balik ATAS zon. Resistance: high masuk zon, close BALIK BAWAH zon.
+ */
+function detectRejection(candles, levels, tolPct = 0.0012) {
+  const out = [];
+  const last = candles[candles.length - 1].close;
+  const tol = last * tolPct;
+  for (let i = 1; i < candles.length; i++) {
+    const c = candles[i];
+    for (const l of levels) {
+      const near = Math.abs(c.low - l.price) <= tol * 2 || Math.abs(c.high - l.price) <= tol * 2
+        || (c.low <= l.price && c.high >= l.price);
+      if (!near) continue;
+      if (l.type === 'L' && c.low <= l.price && c.close > l.price && lowerWick(c) > body(c) * 0.5) {
+        out.push({ i, time: c.time, level: l.price, bias: 'bull', side: 'support' });
+        break;
+      }
+      if (l.type === 'H' && c.high >= l.price && c.close < l.price && upperWick(c) > body(c) * 0.5) {
+        out.push({ i, time: c.time, level: l.price, bias: 'bear', side: 'resistance' });
+        break;
+      }
+    }
+  }
+  return out;
+}
+
+/**
+ * Najmi — Engulfing 3 Type (SOP 3: Confirmation).
+ * Type1: 1 candle dimakan 1 candle. Type2: 1 dimakan 2. Type3: 1 dimakan 3 ("blank candle").
+ * Semua berdasarkan badan, bukan sumbu.
+ */
+function engulfType(candles, i) {
+  const c = candles[i];
+  // Type 1: candle i menelan candle i-1
+  if (i >= 1) {
+    const a = candles[i - 1];
+    if (isBull(c) && isBear(a) && c.open <= a.close && c.close >= a.open && body(c) > body(a)) return { type: 1, bias: 'bull' };
+    if (isBear(c) && isBull(a) && c.open >= a.close && c.close <= a.open && body(c) > body(a)) return { type: 1, bias: 'bear' };
+  }
+  // Type 2: candle i menelan 2 candle sebelumnya
+  if (i >= 2) {
+    const a = candles[i - 2], b = candles[i - 1];
+    const lo = Math.min(a.open, a.close, b.open, b.close);
+    const hi = Math.max(a.open, a.close, b.open, b.close);
+    const sumBody = body(a) + body(b);
+    if (isBull(c) && c.open <= lo && c.close >= hi && body(c) > sumBody * 0.8) return { type: 2, bias: 'bull' };
+    if (isBear(c) && c.open >= hi && c.close <= lo && body(c) > sumBody * 0.8) return { type: 2, bias: 'bear' };
+  }
+  // Type 3: candle i menelan 3 candle sebelumnya
+  if (i >= 3) {
+    const a = candles[i - 3], b = candles[i - 2], d = candles[i - 1];
+    const lo = Math.min(a.open, a.close, b.open, b.close, d.open, d.close);
+    const hi = Math.max(a.open, a.close, b.open, b.close, d.open, d.close);
+    const sumBody = body(a) + body(b) + body(d);
+    if (isBull(c) && c.open <= lo && c.close >= hi && body(c) > sumBody * 0.8) return { type: 3, bias: 'bull' };
+    if (isBear(c) && c.open >= hi && c.close <= lo && body(c) > sumBody * 0.8) return { type: 3, bias: 'bear' };
+  }
+  return null;
+}
+
 // ---------------------------------------------------------------- SNR
+/**
+ * 2nd Movement (Najmi) — validasi zon SNR.
+ * "The zone have a 2nd movement" = harga sentuh zon, pergi jauh, datang balik sentuh lagi.
+ * Zon tanpa 2nd movement = zon hujung trend = BERBAHAYA (invalid).
+ * Support sah: 2nd movement bermula dari bawah/floor. Resistance sah: dari atas/roof.
+ */
+function detect2ndMovement(candles, level, type, minSepPct = 0.004) {
+  const tol = level * 0.0015;
+  const touches = [];
+  for (let i = 0; i < candles.length; i++) {
+    const c = candles[i];
+    const hit = type === 'L'
+      ? Math.abs(c.low - level) <= tol || c.low <= level + tol && c.high >= level - tol
+      : Math.abs(c.high - level) <= tol || c.high >= level - tol && c.low <= level + tol;
+    if (hit) touches.push(i);
+  }
+  if (touches.length < 2) return { has2nd: false, touches: touches.length, gapPct: 0 };
+  // cari dua sentuhan berturutan yang dipisahkan pergerakan bermakna
+  for (let k = 1; k < touches.length; k++) {
+    const a = touches[k - 1], b = touches[k];
+    const between = candles.slice(a + 1, b);
+    if (!between.length) continue;
+    const extreme = type === 'L'
+      ? Math.max(...between.map((x) => x.high))
+      : Math.min(...between.map((x) => x.low));
+    const gapPct = Math.abs(extreme - level) / level * 100;
+    if (gapPct >= minSepPct * 100) return { has2nd: true, touches: touches.length, gapPct: +gapPct.toFixed(2) };
+  }
+  return { has2nd: false, touches: touches.length, gapPct: 0 };
+}
+
 /**
  * Level SNR + kekuatan.
  * Najmi: "the more touched, the weaker that SNR".
@@ -301,16 +394,25 @@ function findSNR(candles, swings, tolPct = 0.0012) {
       // Di atas harga = Resistance (tempat sell). Di bawah = Support (tempat buy).
       // Hanya swing H kira sebagai resistance, swing L kira sebagai support.
       // Kekuatan: 1 sentuhan = strong (A/V), 2 = medium, 3+ = weak (banyak disentuh).
+      const m2 = detect2ndMovement(candles, l.price, l.type);
+      // Najmi: zon tanpa 2nd movement = zon hujung trend = INVALID/BERBAHAYA.
+      // Zon valid + belum disentuh banyak = terbaik.
+      let grade = l.touches === 1 ? 'strong' : l.touches === 2 ? 'medium' : 'weak';
+      if (!m2.has2nd) grade = 'invalid';
+      else if (m2.touches >= 4) grade = 'weak';
       return {
         price: l.price,
         role: l.type === 'H' ? 'resistance' : 'support',
         touches: l.touches,
-        grade: l.touches === 1 ? 'strong' : l.touches === 2 ? 'medium' : 'weak',
+        grade,
+        secondMovement: m2.has2nd,
+        gapPct: m2.gapPct,
         distancePct: ((l.price - last) / last) * 100,
         side,
       };
     })
     .filter((l) => (l.role === 'resistance') === (l.side === 'above'))
+    .filter((l) => l.grade !== 'invalid')
     .sort((a, b) => Math.abs(a.distancePct) - Math.abs(b.distancePct));
 }
 
@@ -361,15 +463,50 @@ function analyze(candles, opts = {}) {
 
   // Konfluensi engulfing pada 3 candle terakhir
   let lastEngulf = null;
-  for (let i = lastIdx; i >= Math.max(1, lastIdx - 2); i--) {
-    const e = engulf(c[i - 1], c[i]);
-    if (e) { lastEngulf = { bias: e, i }; break; }
+  for (let i = lastIdx; i >= Math.max(1, lastIdx - 3); i--) {
+    const e = engulfType(candles, i);
+    if (e) { lastEngulf = { bias: e.bias, i, type: e.type }; break; }
   }
   const snrNear = snr.find((s) => Math.abs(s.distancePct) < 0.8) || null;
 
   // Kesan trendline (2 swing sama arah, sentuhan ke-3)
   const tlSell = qmc.some((q) => q.bias === 'bear' && q.i >= lastIdx - 5);
   const tlBuy = qmc.some((q) => q.bias === 'bull' && q.i >= lastIdx - 5);
+
+  // ---- 5SOP Najmi (Low Risk entry) ----
+  // SOP1 Zone: harga dekat zon SNR sah (ada 2nd movement)
+  // SOP2 Rejection: wick tolak dari zon
+  // SOP3 Confirmation: engulfing (type 1/2/3)
+  // SOP4 Setup: QMR / MEF / BSD / QMC / SNRC
+  // SOP5 Entry: hanya bila 4 di atas lengkap
+  const rejections = detectRejection(c, swings);
+  const recentRej = rejections.filter((r) => r.i >= lastIdx - 8);
+  const rejBull = recentRej.some((r) => r.bias === 'bull');
+  const rejBear = recentRej.some((r) => r.bias === 'bear');
+
+  const inZone = (bias) => {
+    if (!snr.length) return false;
+    const z = snr.filter((s) => Math.abs(s.distancePct) < 1.2);
+    if (!z.length) return false;
+    return bias === 'bull' ? z.some((s) => s.role === 'support') : z.some((s) => s.role === 'resistance');
+  };
+
+  // Skor 5SOP per arah — menentukan "Low Risk" sebenar
+  const sop = {
+    bull: {
+      zone: inZone('bull'),
+      rejection: rejBull,
+      confirmation: !!lastEngulf && lastEngulf.bias === 'bull',
+      htf: opts.htfConfirm === 'bull',
+    },
+    bear: {
+      zone: inZone('bear'),
+      rejection: rejBear,
+      confirmation: !!lastEngulf && lastEngulf.bias === 'bear',
+      htf: opts.htfConfirm === 'bear',
+    },
+  };
+  const sopCount = (b) => [sop[b].zone, sop[b].rejection, sop[b].confirmation, sop[b].htf].filter(Boolean).length;
 
   // Arah direction terkini (DMD dalam 40 candle terakhir)
   const dirRecent = dmd.filter((d) => d.i >= lastIdx - 40).slice(-1)[0] || null;
@@ -391,6 +528,7 @@ function analyze(candles, opts = {}) {
   // Skor signal: direction + setup + confluence
   const scored = candidates.slice(0, 12).map((s) => {
     const agreesDir = dirRecent ? dirRecent.bias === s.bias : null;
+    const sopN = sopCount(s.bias);
     const { ck, score } = gradeConfluence({
       snrNear: !!snrNear && (
         (s.bias === 'bull' && snrNear.role === 'support') ||
@@ -400,14 +538,17 @@ function analyze(candles, opts = {}) {
       engulfing: !!lastEngulf && lastEngulf.bias === s.bias,
       htfConfirm: opts.htfConfirm === s.bias,
     });
-    let conf = 30 + score * 15;
-    if (agreesDir) conf += 20;
-    if (agreesDir === false) conf -= 15;
-    if (s.risk === 'low') conf += 8;
-    if (s.risk === 'high') conf -= 8;
+    // confidence: asas + konfluensi + 5SOP (setiap SOP = 10 mata) + direction
+    let conf = 25 + score * 12 + sopN * 10;
+    if (agreesDir) conf += 12;
+    if (agreesDir === false) conf -= 12;
+    // setup yang memang low-risk (QMC/SNRC) +/-, high-risk (QMR/MEF/BSD) -
+    if (s.risk === 'low') conf += 5;
+    if (s.risk === 'high') conf -= 6;
+    if (s.risk === 'high' && sopN >= 3) conf += 8; // HTF confirm selamatkan high-risk
     // setup lebih lama = kurang relevan
     conf -= Math.min(15, (lastIdx - s.i) * 1.5);
-    return { ...s, ck, conf: Math.max(5, Math.min(97, Math.round(conf))), agreesDir };
+    return { ...s, ck, conf: Math.max(5, Math.min(98, Math.round(conf))), agreesDir, sopN };
   }).sort((a, b) => b.conf - a.conf);
 
   const top = scored[0] || null;
@@ -464,10 +605,13 @@ function analyze(candles, opts = {}) {
       qmr: qm.length, qmc: qmc.length, blindspot: bs.length, mef: mef.length, snr: snr.length,
     },
     snr: snr.slice(0, 6),
-    engulfing: lastEngulf,
+    engulfing: lastEngulf ? { bias: lastEngulf.bias, i: lastEngulf.i, type: lastEngulf.type } : null,
+    rejections: recentRej.slice(-3),
+    sop,
+    sopScore: { bull: sopCount('bull'), bear: sopCount('bear') },
     setups: scored.slice(0, 6).map((s) => ({
       name: s.name, bias: s.bias, kind: s.kind, risk: s.risk,
-      time: s.time, i: s.i, ck: s.ck, conf: s.conf, agreesDir: s.agreesDir,
+      time: s.time, i: s.i, ck: s.ck, conf: s.conf, agreesDir: s.agreesDir, sop: s.sopN,
       level: s.level ? +s.level.toFixed(3) : null,
       zone: s.zone ? { top: +s.zone.top.toFixed(3), bottom: +s.zone.bottom.toFixed(3) } : null,
     })),

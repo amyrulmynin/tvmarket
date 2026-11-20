@@ -92,10 +92,11 @@
   </div>
 
   <h2>4. Kod inti</h2>
-  <pre>const API = 'https://maine-roulette-throws-qty.trycloudflare.com';
+  <pre>const API = 'https://tvmarket-api.mudahpays.my.id';
+const KEY = '&lt;API_KEY_ANDA&gt;';   // hantar sebagai ?key= atau header X-API-Key
 
 // snapshot + poll setiap 2 saat
-const r = await fetch(`${API}/api/live?symbol=OANDA:XAUUSD&amp;interval=1&amp;bars=120`,
+const r = await fetch(`${API}/api/live?symbol=OANDA:XAUUSD&amp;interval=1&amp;bars=120&amp;key=${KEY}`,
                       { cache: 'no-store' });
 const d = await r.json();
 // d.quote   -> { price, changePercent, high, low, open, volume, name, source }
@@ -104,7 +105,8 @@ const d = await r.json();
 
 <script>
 // Ganti kepada URL server awak (tunnel atau IP:port)
-const API = 'https://maine-roulette-throws-qty.trycloudflare.com';
+const API = 'https://tvmarket-api.mudahpays.my.id';
+const KEY = 'QvEswB9dSDRtg6MwF_f8Uwt9_XONmbeFeG--IEwq80Y';
 
 let iv = '1D', timer = null, first = true;
 const $ = (id) => document.getElementById(id);
@@ -115,7 +117,7 @@ const fmt = (v, d = 2) =>
 // ---------- poll /api/live ----------
 async function poll() {
   try {
-    const r = await fetch(`${API}/api/live?symbol=OANDA:XAUUSD&interval=${iv}&bars=90`,
+    const r = await fetch(`${API}/api/live?symbol=OANDA:XAUUSD&interval=${iv}&bars=90&key=${KEY}`,
                           { cache: 'no-store' });
     if (!r.ok) throw new Error('HTTP ' + r.status);
     const d = await r.json();
@@ -172,7 +174,7 @@ $('go').onclick = async () => {
   if (!q) return;
   $('out').textContent = 'mencari…';
   try {
-    const r = await fetch(`${API}/api/search?q=${encodeURIComponent(q)}`, { cache: 'no-store' });
+    const r = await fetch(`${API}/api/search?q=${encodeURIComponent(q)}&key=${KEY}`, { cache: 'no-store' });
     const d = await r.json();
     const rows = (d.results || []).slice(0, 12)
       .map(x => `  ${x.symbol.padEnd(24)} ${x.description || x.name || ''}`).join('\n');

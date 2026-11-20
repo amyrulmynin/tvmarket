@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ui</title>
+    <script>
+      // Penangkap ralat awal — mesti dalam <head> SEBELUM sebarang script app.
+      // Jika app gagal dimuat (blank screen), punca sebenar dipapar terus.
+      (function () {
+        function show(msg) {
+          var d = document.getElementById('__diag');
+          if (!d) {
+            if (!document.body) { setTimeout(function(){show(msg);}, 50); return; }
+            d = document.createElement('div');
+            d.id = '__diag';
+            d.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:99999;'
+              + 'background:#b00020;color:#fff;font:12px monospace;padding:6px;'
+              + 'white-space:pre-wrap;word-break:break-all;max-height:55%;overflow:auto';
+            document.body.appendChild(d);
+          }
+          d.textContent = msg + '\n' + d.textContent;
+        }
+        window.addEventListener('error', function (e) {
+          show('JS: ' + (e.message || e.type) + ' @' + (e.filename||'').split('/').pop()
+               + ':' + (e.lineno||'') + ':' + (e.colno||''));
+        });
+        window.addEventListener('unhandledrejection', function (e) {
+          show('Promise: ' + (e.reason && e.reason.message ? e.reason.message : String(e.reason)));
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <div style="position:fixed;top:0;left:0;right:0;bottom:0;background:#0a0c10;color:#8a93a6;
+                  display:flex;align-items:center;justify-content:center;
+                  font:15px system-ui,sans-serif;letter-spacing:.5px;flex-direction:column;gap:12px">
+        <div style="width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,#26a69a,#4f8cff);
+                    display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;font-weight:700">X</div>
+        <div>TV MARKET</div>
+        <div id="__boot" style="font-size:12px;opacity:.65">memuatkan…</div>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

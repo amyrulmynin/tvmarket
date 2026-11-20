@@ -1,0 +1,11 @@
+node_modules/
+dist/
+build/
+*.log
+.env
+.env.local
+.vercel
+.DS_Store
+sdk/
+android-src/assets/web/index.html
+*.apk

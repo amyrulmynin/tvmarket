@@ -418,9 +418,16 @@ const server = http.createServer(async (req, res) => {
     if (u.pathname === '/api/bystra') {
       // Analisis penunjuk kaedah Bystra: ambil candle LTF + HTF (confirmation),
       // lalu kira direction, SNR, setup, entry/SL/TP, confidence %.
+      // Scalping (m1/m5) — rujukan paksa m15 sebagai pengesahan direction/HTF.
       const iv = u.searchParams.get('interval') || '60';
-      const n = Math.min(parseInt(u.searchParams.get('bars') || '120', 10), 500);
+      const scan = u.searchParams.get('scan') === '1';
       const useHtf = u.searchParams.get('htf') !== '0';
+      const scalpMode = (iv === '1' || iv === '5');
+      const htfTarget = scalpMode ? '15' : (HTF_OF[iv] || null);
+      // Mod scan: default window 1 hari penuh (m1=1440, m5=576≈2 hari) supaya
+      // "sehari pasti ada signal" sentiasa boleh disahkan.
+      const defBars = scan ? (iv === '1' ? 1440 : iv === '5' ? 576 : 120) : 120;
+      const n = Math.min(parseInt(u.searchParams.get('bars') || String(defBars), 10), 5000);
       const snap = await snapshotCandles(sym, iv, n);
       let htfConfirm = null;
       let htfTrend = null;
@@ -428,7 +435,7 @@ const server = http.createServer(async (req, res) => {
       let htfIv = null;
       if (useHtf) {
         try {
-          const hiv = HTF_OF[iv] || null;
+          const hiv = htfTarget;
           if (hiv) {
             htfIv = hiv;
             const hs = await snapshotCandles(sym, hiv, Math.min(n, 120));
@@ -474,7 +481,33 @@ const server = http.createServer(async (req, res) => {
       }
       return json(res, 200, {
         ...report,
-        htf: { interval: HTF_OF[iv] || null, trend: htfTrend, direction: htfDirection },
+        htf: { interval: htfTarget, trend: htfTrend, direction: htfDirection },
+        ...(scan ? (() => {
+          // Mod scalping: senarai SEMUA signal dalam tempoh (1 hari m1 = 1440 bar).
+          // Jaminan ">1 signal sehari": jika pada minConf tak ada signal dalam hari
+          // terkini, longgar minConf bertahap (60→55→45) sehingga dapat sekurang-kurangnya
+          // 2 signal. Pastikan selalu ada sesuatu untuk scalping harian.
+          let minConf = parseInt(u.searchParams.get('minconf') || '55', 10);
+          let sc = bystra.scanSignals(snap.candles, { htfConfirm, minConf, interval: iv });
+          let fallbackConf = null;
+          const dayStart = Math.floor((snap.candles[snap.candles.length - 1].time > 1e11
+            ? snap.candles[snap.candles.length - 1].time / 1000
+            : snap.candles[snap.candles.length - 1].time) / 86400) * 86400;
+          const today = (sc.ok ? sc.signals : []).filter((s) => s.time >= dayStart);
+          if (sc.ok && today.length < 2) {
+            for (const lv of [Math.min(minConf, 55), 45]) {
+              if (lv >= minConf) continue;
+              const sc2 = bystra.scanSignals(snap.candles, { htfConfirm, minConf: lv, interval: iv });
+              const t2 = (sc2.ok ? sc2.signals : []).filter((s) => s.time >= dayStart);
+              if (t2.length >= 2) { sc = sc2; fallbackConf = lv; break; }
+            }
+          }
+          return {
+            scan: sc.ok ? sc.signals : [],
+            scanStats: { ...(sc.stats || null), fallbackConf, todaySignals: (sc.ok ? sc.signals : []).filter((s) => s.time >= dayStart).length },
+            scanError: sc.error || null,
+          };
+        })() : {}),
       });
     }
     if (u.pathname === '/api/search') {

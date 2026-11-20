@@ -477,6 +477,159 @@ function validateBreak(candles, level, dir, overshootAtr = 1.5, atr, fromIdx = 0
   const overshoot = depth > atr * overshootAtr;
   return { clean: true, overshoot, depth: +depth.toFixed(3) };
 }
+// ---------------------------------------------------------------- scalp scan
+/**
+ * scanSignals — senaraikan SEMUA setup dalam tempoh candle (scalping intraday).
+ * Berbeza dengan analyze() yang hanya fokus setup terbaik terkini.
+ * Tujuan: pastikan sehari ada >1 signal — setiap setup dapat plan entry/SL/TP
+ * yang dikira pada struktur SEKITAR MASA SETUP (bukan candle terakhir).
+ */
+function scanSignals(candles, opts = {}) {
+  if (!Array.isArray(candles) || candles.length < 30) {
+    return { ok: false, error: 'candle tidak cukup untuk scan (perlu >= 30)' };
+  }
+  const c = candles.map((x) => ({
+    time: x.time > 1e11 ? Math.round(x.time / 1000) : x.time,
+    open: +x.open, high: +x.high, low: +x.low, close: +x.close,
+  }));
+  const swings = findSwings(c, 2);
+  const dmd = detectDMD(c, swings);
+  const qm = detectQM(c, swings);
+  const qmc = detectQMC(c, swings);
+  const bases = detectBases(c);
+  const bs = detectBlindspot(c);
+  const mef = detectMEF(c, swings);
+  const snr = findSNR(c, swings);
+  const rejections = detectRejection(c, swings);
+  const lastIdx = c.length - 1;
+
+  const all = [
+    ...qm.map((x) => ({ ...x, name: 'QMR', risk: 'high' })),
+    ...qmc,
+    ...bases.map((x) => ({
+      ...x,
+      name: (x.type === 'RBR' || x.type === 'DBD') ? 'SNRC1' : 'SNRC2',
+    })),
+    ...bs,
+    ...mef,
+    ...detectSISD(dmd, [...qm.map((x) => ({ ...x, name: 'QMR', bias: x.bias })), ...qmc, ...bs, ...mef]),
+  ];
+
+  const minConf = opts.minConf != null ? opts.minConf : 55;
+  const out = [];
+  for (const s of all) {
+    if (s.i >= lastIdx - 1) continue; // candle belum tutup — bukan signal lengkap
+    const bull = s.bias === 'bull';
+    // ATR lokal pada masa setup
+    const from = Math.max(0, s.i - 14);
+    const atrLocal = c.slice(from, s.i + 1).reduce((a, x) => a + range(x), 0) / (s.i + 1 - from);
+    const entry = c[s.i].close;
+    // zon setup (untuk semakan SNR)
+    const zone = s.zone || (s.level != null ? { top: s.level, bottom: s.level } : null);
+    // engulfing dalam 3 candle selepas setup
+    let eng = null;
+    for (let i = s.i; i <= Math.min(s.i + 3, lastIdx); i++) {
+      const e = engulfType(c, i);
+      if (e) { eng = e; break; }
+    }
+    // SNR bersentuh dengan zon setup (arah mesti sama)
+    let snrHit = null;
+    if (zone) {
+      snrHit = snr.find((x) => {
+        const need = bull ? x.role === 'support' : x.role === 'resistance';
+        const overlap = Math.min(x.price, zone.top) - Math.max(x.price, zone.bottom);
+        return need && (overlap > -atrLocal * 0.6);
+      }) || null;
+    }
+    // rejection sekitar masa setup
+    const rejHit = rejections.some((r) => r.i >= s.i - 2 && r.i <= s.i + 2 && r.bias === s.bias);
+
+    // Confidence heuristik (skor konfluensi, bukan kebarangkalian menang)
+    let conf = 30;
+    if (eng && eng.bias === s.bias) conf += 15;
+    if (snrHit) conf += 20;
+    if (rejHit) conf += 12;
+    if (opts.htfConfirm === s.bias) conf += 18;
+    if (opts.htfConfirm && opts.htfConfirm !== s.bias) conf -= 15;
+    if (s.risk === 'low') conf += 6;
+    if (s.risk === 'high') conf -= 5;
+    if (s.name === 'SISD') conf += 10;
+    conf = Math.max(5, Math.min(97, Math.round(conf)));
+    if (conf < minConf) continue;
+
+    // Plan pada struktur SEKITAR MASA SETUP
+    const swLocal = swings.filter((x) => x.i >= s.i - 15 && x.i <= s.i + 20);
+    const swingRef = bull
+      ? (swLocal.filter((x) => x.type === 'L').slice(-1)[0] || { price: entry - atrLocal * 1.5 }).price
+      : (swLocal.filter((x) => x.type === 'H').slice(-1)[0] || { price: entry + atrLocal * 1.5 }).price;
+    const buf = atrLocal * 0.5;
+    const rawSl = bull ? Math.min(swingRef - buf, entry - atrLocal * 1.2) : Math.max(swingRef + buf, entry + atrLocal * 1.2);
+    const sl = bull ? Math.max(rawSl, entry - atrLocal * 2.5) : Math.min(rawSl, entry + atrLocal * 2.5);
+    const risk = Math.abs(entry - sl) || atrLocal;
+    const tp1 = bull ? entry + risk : entry - risk;
+    const nextSw = bull
+      ? swLocal.filter((x) => x.type === 'H' && x.price > entry).slice(-1)[0]
+      : swLocal.filter((x) => x.type === 'L' && x.price < entry).slice(-1)[0];
+    const tp2raw = nextSw ? nextSw.price : (bull ? entry + risk * 2 : entry - risk * 2);
+    const tp2 = bull ? Math.max(tp2raw, tp1 + risk * 0.5) : Math.min(tp2raw, tp1 - risk * 0.5);
+
+    const age = lastIdx - s.i;
+    const status = age <= 5 ? 'active' : age <= 20 ? 'fresh' : 'closed';
+    out.push({
+      name: s.name, bias: s.bias, kind: s.kind, risk: s.risk,
+      i: s.i, time: s.time, ageBars: age, status,
+      ck: snrHit && eng && eng.bias === s.bias ? 'CK2' : snrHit ? 'CK1' : null,
+      conf,
+      entry: +entry.toFixed(3), sl: +sl.toFixed(3), tp1: +tp1.toFixed(3), tp2: +tp2.toFixed(3),
+      riskPips: +risk.toFixed(3), rr2: +(Math.abs(tp2 - entry) / risk).toFixed(2),
+      snr: snrHit ? +snrHit.price.toFixed(3) : null,
+      engulfing: eng ? eng.type : null,
+      level: s.level != null ? +s.level.toFixed(3) : null,
+      zone: zone ? { top: +zone.top.toFixed(3), bottom: +zone.bottom.toFixed(3) } : null,
+    });
+  }
+  out.sort((a, b) => a.i - b.i);
+
+  // Dedupe scalping: setup yang lahir berturut-turut dalam cluster masa yang sama
+  // (m1: 10 bar, m5: 6 bar) + arah sama = anggap satu signal. Ambil conf tertinggi.
+  const clusterBars = opts.clusterBars != null ? opts.clusterBars : (opts.interval === '5' ? 6 : 10);
+  const dedup = [];
+  for (const s of out) {
+    const prev = dedup[dedup.length - 1];
+    if (prev && s.bias === prev.bias && s.i - prev.i <= clusterBars) {
+      if (s.conf > prev.conf) dedup[dedup.length - 1] = s;
+      continue;
+    }
+    dedup.push(s);
+  }
+
+  // Sesi dagangan (UTC) — bantu user nampak taburan sehari
+  const sessionOf = (t) => {
+    const h = new Date((t > 1e11 ? t : t * 1000)).getUTCHours();
+    if (h >= 0 && h < 7) return 'Asia';
+    if (h >= 7 && h < 12) return 'London';
+    if (h >= 12 && h < 17) return 'NY-AM';
+    if (h >= 17 && h < 21) return 'NY-PM';
+    return 'Asia';
+  };
+  for (const s of dedup) s.session = sessionOf(s.time);
+
+  const bulls = dedup.filter((x) => x.bias === 'bull').length;
+  return {
+    ok: true,
+    signals: dedup,
+    stats: {
+      total: dedup.length, raw: out.length, bulls, bears: dedup.length - bulls,
+      active: dedup.filter((x) => x.status === 'active').length,
+      fresh: dedup.filter((x) => x.status === 'fresh').length,
+      sessions: ['Asia', 'London', 'NY-AM', 'NY-PM'].reduce((a, k) => {
+        a[k] = dedup.filter((x) => x.session === k).length; return a;
+      }, {}),
+      minConf, clusterBars,
+    },
+  };
+}
+
 /**
  * CK1/CK2/CK3 — tahap confluence (CLAB).
  *   CK1 = SNR kuat + trendline
@@ -700,6 +853,6 @@ function analyze(candles, opts = {}) {
 
 module.exports = {
   analyze, findSwings, trendOf, detectDMD, detectBases, detectQM, detectQMC,
-  detectBlindspot, detectMEF, findSNR, gradeConfluence, detectSISD, validateBreak,
+  detectBlindspot, detectMEF, findSNR, gradeConfluence, detectSISD, validateBreak, scanSignals,
   isMarubozu, engulf, isBase,
 };

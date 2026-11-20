@@ -49,6 +49,20 @@ type BystraPlan = {
   entry: number; sl: number; tp1: number; tp2: number;
   riskPips: number; rr1: number; rr2: number; confidence: number; atr: number;
 }
+type BystraSignal = {
+  name: string; bias: 'bull' | 'bear'; kind?: string; risk?: string;
+  i: number; time: number; ageBars: number; status: string;
+  ck: string | null; conf: number; session: string;
+  entry: number; sl: number; tp1: number; tp2: number;
+  riskPips: number; rr2: number;
+  snr: number | null; engulfing: string | null;
+  level: number | null; zone: { top: number; bottom: number } | null;
+}
+type BystraStats = {
+  total: number; raw?: number; bulls: number; bears: number;
+  active: number; fresh: number; minConf: number; clusterBars?: number;
+  sessions?: Record<string, number>; fallbackConf?: number | null; todaySignals?: number;
+}
 type BystraReport = {
   ok: boolean; price?: number; atr?: number; trend?: string;
   direction?: { type: string; bias: 'bull' | 'bear'; zone: { top: number; bottom: number } } | null;
@@ -58,12 +72,18 @@ type BystraReport = {
   engulfing?: { bias: string; i: number } | null;
   setups?: BystraSetup[];
   plan?: BystraPlan | null;
-  htf?: { interval: string | null; trend: string | null };
+  htf?: { interval: string | null; trend: string | null; direction?: any };
+  scan?: BystraSignal[];
+  scanStats?: BystraStats | null;
+  scanError?: string | null;
 }
 
 function useBystra(interval: string, bars: number) {
   const [report, setReport] = useState<BystraReport | null>(null)
   const [err, setErr] = useState('')
+  // Mod scalping: m1/m5 → scan penuh 1 hari dengan rujukan m15
+  const scalp = interval === '1' || interval === '5'
+  const scanBars = interval === '1' ? 1440 : interval === '5' ? 576 : bars
 
   useEffect(() => {
     let closed = false
@@ -73,7 +93,8 @@ function useBystra(interval: string, bars: number) {
       if (closed) return
       const host = API_HOSTS[0]
       const url = `${host}/api/bystra?symbol=${encodeURIComponent(SYMBOL)}`
-        + `&interval=${interval}&bars=${Math.max(bars, 150)}&key=${API_KEY}`
+        + `&interval=${interval}&bars=${scalp ? scanBars : Math.max(bars, 150)}`
+        + `&scan=${scalp ? 1 : 0}&minconf=60&key=${API_KEY}`
       try {
         const r = await fetch(url, { cache: 'no-store' })
         if (!r.ok) throw new Error(`HTTP ${r.status}`)
@@ -89,7 +110,7 @@ function useBystra(interval: string, bars: number) {
 
     run()
     return () => { closed = true; if (timer) clearTimeout(timer) }
-  }, [interval, bars])
+  }, [interval, bars, scalp, scanBars])
 
   return { report, err }
 }
@@ -229,6 +250,121 @@ function BystraPanel({ report, err }: {
                 </div>
               ))}
             </div>
+          )}
+        </>
+      )}
+    </section>
+  )
+}
+
+const SESSION_LABEL: Record<string, string> = {
+  Asia: 'Asia', London: 'London', 'NY-AM': 'NY AM', 'NY-PM': 'NY PM',
+}
+
+/**
+ * Panel scalping (m1/m5 rujukan m15): senarai SEMUA signal hari ini +
+ * statistik supaya ada >1 signal sehari, dengan entry/SL/TP/conf setiap signal.
+ */
+function ScalpPanel({ report }: { report: BystraReport | null }) {
+  const [open, setOpen] = useState(true)
+  const [showAll, setShowAll] = useState(false)
+  const [sel, setSel] = useState<string>('today')
+
+  if (!report || !report.scan) return null
+  const sigs = report.scan || []
+  const st = report.scanStats
+  const now = sigs.length ? Math.max(...sigs.map((s) => s.time)) : 0
+  const dayStart = now ? Math.floor(now / 86400) * 86400 : 0
+
+  const today = sigs.filter((s) => s.time >= dayStart)
+  const list = sel === 'today' ? today : sel === 'fresh'
+    ? sigs.filter((s) => s.status === 'active' || s.status === 'fresh')
+    : sigs
+  const shown = showAll ? list : list.slice(-8).reverse()
+
+  const sess = st?.sessions || {}
+  const sessMax = Math.max(1, ...Object.values(sess).map((v) => Number(v) || 0))
+
+  return (
+    <section className="by-panel by-scalp">
+      <button className="by-head" onClick={() => setOpen((v) => !v)}>
+        <span className="by-tag">SCALP</span>
+        <span className="by-pill dir">
+          rujukan {report.htf?.interval ? (TF_LABEL[report.htf.interval] || report.htf.interval) : 'm15'}
+          {report.htf?.trend === 'up' ? ' ↑' : report.htf?.trend === 'down' ? ' ↓' : ''}
+        </span>
+        <span className={`by-pill ${today.length > 1 ? 'up' : 'flat'}`}>
+          {today.length} signal hari ini
+        </span>
+        <span className="by-caret">{open ? '▾' : '▸'}</span>
+      </button>
+
+      {open && (
+        <>
+          {st && (
+            <div className="by-scalp-stats">
+              <span>total <b>{st.total}</b></span>
+              <span>bull <b className="up">{st.bulls}</b></span>
+              <span>bear <b className="down">{st.bears}</b></span>
+              <span>fresh <b>{st.fresh}</b></span>
+              {st.fallbackConf != null && (
+                <span className="by-warn">conf longgar {st.fallbackConf}</span>
+              )}
+            </div>
+          )}
+
+          <div className="by-sess">
+            {Object.entries(sess).map(([k, v]) => (
+              <div key={k} className="by-sess-col">
+                <div className="by-sess-bar-wrap">
+                  <div
+                    className="by-sess-bar"
+                    style={{ height: `${Math.max(6, (Number(v) / sessMax) * 100)}%` }}
+                  />
+                </div>
+                <span className="by-sess-n">{Number(v)}</span>
+                <span className="by-sess-l">{SESSION_LABEL[k] || k}</span>
+              </div>
+            ))}
+          </div>
+
+          <div className="by-tabs">
+            {(['today', 'fresh', 'all'] as const).map((t) => (
+              <button
+                key={t}
+                className={`by-tab ${sel === t ? 'on' : ''}`}
+                onClick={() => setSel(t)}
+              >
+                {t === 'today' ? 'Hari ini' : t === 'fresh' ? 'Aktif/Fresh' : 'Semua'}
+              </button>
+            ))}
+          </div>
+
+          <div className="by-list by-scalp-list">
+            {shown.length === 0 && (
+              <span className="by-muted">Tiada signal dalam penapis ini.</span>
+            )}
+            {shown.map((s, k) => (
+              <div key={k} className="by-row by-sig">
+                <span className={`by-dot ${s.bias}`} />
+                <span className="by-row-name">{s.name}</span>
+                <span className="by-sig-time">
+                  {new Date(s.time * 1000).toISOString().slice(11, 16)} UTC
+                </span>
+                <span className="by-sig-sess">{s.session}</span>
+                <span className="by-sig-lv">{nf(s.entry)}</span>
+                <span className="by-sig-lv sl">{nf(s.sl)}</span>
+                <span className="by-sig-lv tp">{nf(s.tp1)}</span>
+                <span className="by-row-conf">{s.conf}%</span>
+                <span className={`by-sig-status ${s.status}`}>{s.status}</span>
+              </div>
+            ))}
+          </div>
+
+          {list.length > 8 && (
+            <button className="by-more" onClick={() => setShowAll((v) => !v)}>
+              {showAll ? 'Tunjuk kurang' : `Tunjuk semua (${list.length})`}
+            </button>
           )}
         </>
       )}
@@ -405,6 +541,7 @@ export default function App() {
       </main>
 
       <BystraPanel report={report} err={err} />
+      <ScalpPanel report={report} />
 
       <footer className="controls">
         <SegmentedControl
